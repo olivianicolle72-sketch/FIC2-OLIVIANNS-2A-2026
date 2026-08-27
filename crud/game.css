@@ -1,5 +1,11 @@
+/**/
 
+@font-face {
+    font-family: 'WALL';
+    src: url(Gamer.ttf);
+}
 
-
-
+p{
+    font-family: 'WALL';
+}
 
