@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE FISH</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+
+<header class="br">
+    <h1>SPACE QUACK</h1>
+</header>
+   
+<div class="container">
+   
+    <form id="form">
+
+        <h2>REGISTRO DO ASTRONAUTA</h2>
+
+        <!-- NOME DO PERSONAGEM -->
+        <p>DIGITE O NOME DO ASTRONAUTA</p>
+        <input type="text" placeholder="Seu nome" id="nome" maxlength="20">
+        <br>
+
+        <!-- NICK DO DONO DO PERSONAGEM -->
+        <p>DIGITE SEU NICK</p>
+        <input type="text" placeholder="Seu nome de usuário: " id="user" maxlength="20">
+        <br>
+
+        <!-- IDADE DO PERSONAGEM -->
+        <p>DIGITE A IDADE</p>
+        <input type="number" min="0" max="50" id="idade">
+        <br>
+
+        <!-- Escolha Aleatoria -->
+        <div>
+            <p>ESCOLHA SUAS LINGUAGENS DE PROGRAMAÇÃO</p>
+            <input type="checkbox" name="opcoes" id="html">
+            <label for="html">HTML</label>
+            
+            <input type="checkbox" name="opcoes" id="css">
+            <label for="css">CSS</label>
+            
+            
+            <input type="checkbox" name="opcoes" id="javascript">
+            <label for="javascript">JAVASCRIPT</label>
+        </div>
+
+        <!-- Botão Principal  -->
+        <br>
+        <button type="submit" id="Enviar">ENVIAR</button>
+       
+
+    </form>
+</div> 
+
+<section class="painel">
+
+            <div class="painel-topo">
+
+                <div>
+
+                    <h2>
+                        Astros
+                    </h2>
+
+                    <p>
+                        Astronautas cadastrados no espaço
+                    </p>
+
+                </div>
+
+
+                <span id="contador">
+                    Total: 0
+                </span>
+
+            </div>
+
+
+            <div
+                id="listaastros"
+                class="lista-nautas">
+
+            </div>
+
+        </section>
+
+
+
+
+</section>
+<script src="jg.js" ></script>
+</body>
+</html>
