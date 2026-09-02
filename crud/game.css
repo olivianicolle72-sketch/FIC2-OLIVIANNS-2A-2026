@@ -1,11 +1,255 @@
-/*
-
-@font-face {
-    font-family: 'WALL';
-    src: url(Gamer.ttf);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-p{
-    font-family: 'WALL';
+body {
+    background-color: #000000;
+    background-image: 
+        radial-gradient(circle at 50% 30%, rgba(66, 84, 131, 0.15) 0%, transparent 60%),
+        linear-gradient(180deg, #24365d 0%, #000000 100%);
+    color: #b4c1dc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
 }
-*/
+
+.br {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.br h1 {
+    font-size: 2.5rem;
+    color: #b4c1dc;
+    font-weight: 700;
+    letter-spacing: 6px;
+    text-shadow: 0 0 25px rgba(180, 193, 220, 0.3);
+}
+
+.container {
+    background: rgba(36, 54, 93, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(111, 151, 191, 0.2);
+    border-radius: 16px;
+    padding: 35px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(180, 193, 220, 0.1);
+}
+
+form h2 {
+    font-size: 1.2rem;
+    color: #b4c1dc;
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+form p {
+    font-size: 0.75rem;
+    color: #6878ad;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #425483;
+    border-radius: 8px;
+    color: #b4c1dc;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+    color: #4c5268;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #b4c1dc;
+    background: rgba(36, 54, 93, 0.2);
+    box-shadow: 0 0 15px rgba(104, 120, 173, 0.25);
+}
+
+div > div {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #425483;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background: #425483;
+    border-color: #b4c1dc;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid #b4c1dc;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+label {
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #7f97bf;
+    margin-right: 12px;
+    letter-spacing: 1px;
+}
+
+#ENVIAR {
+    width: 100%;
+    margin-top: 28px;
+    padding: 14px;
+    background: #24365d;
+    border: 1px solid #425483;
+    border-radius: 8px;
+    color: #b4c1dc;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#ENVIAR:hover {
+    background: #425483;
+    color: #ffffff;
+    border-color: #b4c1dc;
+    box-shadow: 0 0 20px rgba(66, 84, 131, 0.4);
+    transform: translateY(-1px);
+}
+
+#contador {
+    text-align: center;
+    color: #6878ad;
+    font-size: 0.85rem;
+    margin: 24px 0 10px 0;
+    letter-spacing: 1px;
+}
+
+#listaJogadores {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 10px;
+}
+
+.card {
+    background: rgba(36, 54, 93, 0.15);
+    border: 1px solid rgba(66, 84, 131, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease;
+}
+
+.card:hover {
+    border-color: rgba(180, 193, 220, 0.4);
+}
+
+.card h3 {
+    color: #b4c1dc;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(66, 84, 131, 0.3);
+    padding-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.card p {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: #7f97bf;
+}
+
+.card p strong {
+    color: #b4c1dc;
+}
+
+.acoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.acoes button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #425483;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    background: rgba(36, 54, 93, 0.3);
+    color: #b4c1dc;
+    transition: all 0.2s ease;
+}
+
+.acoes button:hover {
+    background: #425483;
+    color: #ffffff;
+}
+
+.acoes .botao-excluir {
+    background: rgba(36, 24, 30, 0.4);
+    border-color: #505c6b;
+    color: #7f97bf;
+}
+
+.acoes .botao-excluir:hover {
+    background: #4c5268;
+    color: #ffffff;
+    border-color: #b4c1dc;
+}
+
+.lista-vazia {
+    text-align: center;
+    color: #505c6b;
+    font-style: italic;
+    padding: 20px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}

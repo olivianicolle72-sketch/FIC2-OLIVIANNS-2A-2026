@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE FISH</title>
+    <link rel="stylesheet" href="jg.css">
+</head>
+<body>
+
+   <header class="br">
+    <h1>SPACE QUACK</h1>
+</header>
+   
+<div class="container">
+<form id="from">
+    
+    <input type="hidden" id="idJogador">
+
+    <h2>REGISTRO DO ASTRONAUTA</h2>
+    <p>DIGITE O NOME DO ASTRONAUTA</p>
+    <input type="text" placeholder="Seu nome" id="nome" maxlength="20">
+    <br>
+
+    <p>DIGITE SEU NICK</p>
+    <input type="text" placeholder="Seu nome de usuário: " id="user" maxlength="20">
+    <br>
+
+    <p>DIGITE A IDADE</p>
+    <input type="number" min="0" max="50" id="idade">
+    
+    <div>
+        <p>ESCOLHA SUAS LINGUAGENS DE PROGRAMAÇÃO</p>
+        <input type="checkbox" name="opcoes" id="html">
+        <label for="html">HTML</label>
+        <input type="checkbox" name="opcoes" id="css">
+        <label for="css">CSS</label>
+        <input type="checkbox" name="opcoes" id="Javascript">
+        <label for="javascript">JAVASCRIPT</label>
+    </div>
+</form>
+
+<button id="ENVIAR">ENVIAR</button> 
+
+<div id="contador" style="margin-top: 15px; font-weight: bold;"></div>
+<div id="listaJogadores" style="margin-top: 20px;"></div>
+
+</div>
+<script src="game.js"></script>
+    </body>
+</html>
