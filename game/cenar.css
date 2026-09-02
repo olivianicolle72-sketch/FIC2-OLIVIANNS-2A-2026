@@ -4,16 +4,26 @@ body {
     display: flex;              
     justify-content: center;    
     align-items: center;       
-    min-height: 65vh;        
+    height: 100vh;        
     box-sizing: border-box;   
     background-image: url(https://cienciahoje.org.br/wp-content/uploads/2019/12/Artigo-MICROORGANISMO_AdobeStock_305541479.jpeg); 
     background-repeat: no-repeat;
     background-size: cover;
+    overflow: hidden;
 }
 
 @font-face {
     font-family: 'SPACE';
     src: url(Games-Italic.ttf);
+}
+
+#game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px; /* Aumentei um pouco o espaço */
+    z-index: 2;
+    transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
 .container {
@@ -24,11 +34,65 @@ body {
     font-family: 'SPACE';
     text-align: center;
     line-height: 67px;        
+    margin: 0;
 }
 
-#play{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+#play {
     font-family: 'SPACE';
+    padding: 12px 32px; /* Botão ligeiramente maior */
+    font-size: 20px;
+    cursor: pointer;
+    
+    /* ESTILO PERSONALIZADO NASA */
+    background-color: #0B3D91; /* Azul Escuro */
+    color: #FFFFFF; /* Branco */
+    border: 2px solid transparent; /* Borda inicial invisível */
+    border-radius: 33px; /* Borda arredondada */
+    
+    /* Sombra suave para profundidade */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    
+    /* Transições suaves */
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+#play:hover {
+    background-color: #082c64; /* Um tom de azul levemente mais escuro no hover */
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+    
+    /* Adiciona a borda vermelha no hover */
+    border-color: #FC3D21; /* Vermelho NASA */
+}
+
+/* Efeito de clique */
+#play:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+#lua-linha {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scaleX(0);
+    width: 100vw;
+    height: 4px;
+    background-color: white;
+    box-shadow: 0 0 15px rgba(200, 200, 200, 0.8);
+    opacity: 0;
+    z-index: 1;
+    transition: transform 0.6s ease, height 0.6s ease 0.6s, opacity 0.3s ease;
+}
+
+.sumir {
+    opacity: 0;
+    transform: scale(1.5);
+    pointer-events: none;
+}
+
+.expandir-linha {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1);
+    height: 100vh;
 }
