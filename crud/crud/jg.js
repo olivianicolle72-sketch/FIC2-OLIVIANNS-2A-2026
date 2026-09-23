@@ -1,323 +1,1029 @@
 const CONFIG = {
+
     chaveLocalStorage: "astronautas"
+
 };
+
 
 // ======================================================
 // ESTADO DA APLICAÇÃO
 // ======================================================
+
 const sistema = {
+
     jogadores: [],
+
     jogadorSelecionado: null
+
 };
+
+
+// ======================================================
+// CONTROLE DO JOGO
+// ======================================================
+
+let fichaEnviada = false;
+
+let jogadorProntoParaJogar = null;
+
 
 // ======================================================
 // ELEMENTOS DA INTERFACE
 // ======================================================
-const formulario = document.getElementById("form");
-const campoId = document.getElementById("idJogador");
-const campoNome = document.getElementById("nome");
-const campoNickname = document.getElementById("user");
-const campoIdade = document.getElementById("idade");
-const checkHtml = document.getElementById("html");
-const checkCss = document.getElementById("css");
-const checkJavascript = document.getElementById("javascript");
-const listaJogadores = document.getElementById("listaJogadores");
-const contador = document.getElementById("contador");
-const btnSalvar = document.getElementById("ENVIAR");
-const btnJogar = document.getElementById("JOGAR"); 
+
+const formulario =
+    document.getElementById("from");
+
+const campoId =
+    document.getElementById("idJogador");
+
+const campoNome =
+    document.getElementById("nome");
+
+const campoNickname =
+    document.getElementById("user");
+
+const campoIdade =
+    document.getElementById("idade");
+
+const checkHtml =
+    document.getElementById("html");
+
+const checkCss =
+    document.getElementById("css");
+
+const checkJavascript =
+    document.getElementById("Javascript");
+
+const listaJogadores =
+    document.getElementById("listaJogadores");
+
+const contador =
+    document.getElementById("contador");
+
+const btnSalvar =
+    document.getElementById("ENVIAR");
+
+const btnJogar =
+    document.getElementById("JOGAR");
+
 
 // ======================================================
 // INICIALIZAÇÃO
 // ======================================================
+
 inicializar();
 
+
 function inicializar() {
+
     carregarJogadores();
+
     registrarEventos();
+
     renderizarJogadores();
-    verificarStatusBotaoJogar(); 
+
+    // O botão começa bloqueado
+    btnJogar.disabled = true;
+
 }
+
 
 // ======================================================
 // EVENTOS
 // ======================================================
+
 function registrarEventos() {
-    if (formulario) {
-        formulario.addEventListener("submit", salvarJogador);
-    }
 
-    if (btnJogar) {
-        btnJogar.addEventListener("click", redirecionarParaOJogo);
-    }
+    btnSalvar.addEventListener(
+        "click",
+        salvarJogador
+    );
+
+
+    btnJogar.addEventListener(
+        "click",
+        jogar
+    );
+
 }
 
-// ======================================================
-// REDIRECIONAMENTO (CORRIGIDO: Adicionado aspas)
-// ======================================================
-function redirecionarParaOJogo() {
-    window.location.href = "http://127.0.0.1:5500/game/patos.html"; 
-}
-
-// CONTROLE DO BOTÃO PLAY
-function verificarStatusBotaoJogar() {
-    if (!btnJogar) return;
-    if (sistema.jogadores.length > 0) {
-        btnJogar.removeAttribute("disabled");
-    } else {
-        btnJogar.setAttribute("disabled", "true");
-    }
-}
 
 // ======================================================
-// SALVAR JOGADOR (CREATE / UPDATE)
+// CREATE / UPDATE
 // ======================================================
+
 function salvarJogador(evento) {
-    evento.preventDefault(); 
+
+    evento.preventDefault();
+
 
     if (!validarDados()) {
+
         return;
+
     }
 
+
     if (!campoId || campoId.value === "") {
+
         cadastrarJogador();
+
     } else {
+
         atualizarJogador();
+
     }
+
 }
+
 
 // ======================================================
 // VALIDAÇÃO
 // ======================================================
+
 function validarDados() {
-    const nome = campoNome.value.trim();
-    const nickname = campoNickname.value.trim();
-    const idade = Number(campoIdade.value);
+
+    const nome =
+        campoNome.value.trim();
+
+    const nickname =
+        campoNickname.value.trim();
+
+    const idade =
+        Number(campoIdade.value);
+
+
+    // ==================================================
+    // NOME
+    // ==================================================
 
     if (nome === "") {
-        alert("Informe o nome do astronauta.");
+
+        alert(
+            "Informe o nome do astronauta."
+        );
+
         campoNome.focus();
+
         return false;
+
     }
+
+
+    // ==================================================
+    // NICK
+    // ==================================================
 
     if (nickname === "") {
-        alert("Informe o seu nick.");
+
+        alert(
+            "Informe o seu nick."
+        );
+
         campoNickname.focus();
+
         return false;
+
     }
 
-    if (isNaN(idade) || idade < 18 || idade > 50) {
-        alert("A idade deve estar entre 18 e 50 anos.");
+
+    // ==================================================
+    // IDADE
+    // ==================================================
+
+    if (
+        isNaN(idade) ||
+        idade < 18 ||
+        idade > 50
+    ) {
+
+        alert(
+            "A idade deve estar entre 18 e 50 anos."
+        );
+
         campoIdade.focus();
+
         return false;
+
     }
+
+
+    // ==================================================
+    // LINGUAGENS
+    // ==================================================
+
+    if (
+        !checkHtml.checked &&
+        !checkCss.checked &&
+        !checkJavascript.checked
+    ) {
+
+        alert(
+            "Escolha pelo menos uma linguagem de programação."
+        );
+
+        return false;
+
+    }
+
 
     return true;
+
 }
 
+
 // ======================================================
-// CADASTRAR (Cria o card e salva)
+// CREATE
 // ======================================================
+
 function cadastrarJogador() {
+
     const linguagens = [];
-    if (checkHtml && checkHtml.checked) linguagens.push("HTML");
-    if (checkCss && checkCss.checked) linguagens.push("CSS");
-    if (checkJavascript && checkJavascript.checked) linguagens.push("JAVASCRIPT");
+
+
+    if (checkHtml.checked) {
+
+        linguagens.push("HTML");
+
+    }
+
+
+    if (checkCss.checked) {
+
+        linguagens.push("CSS");
+
+    }
+
+
+    if (checkJavascript.checked) {
+
+        linguagens.push("JAVASCRIPT");
+
+    }
+
 
     const jogador = {
-        id: Date.now(),
-        nome: campoNome.value.trim(),
-        nickname: campoNickname.value.trim(),
-        idade: Number(campoIdade.value),
-        linguagens: linguagens,
-        dataCriacao: new Date().toLocaleString()
+
+        id:
+            Date.now(),
+
+        nome:
+            campoNome.value.trim(),
+
+        nickname:
+            campoNickname.value.trim(),
+
+        idade:
+            Number(campoIdade.value),
+
+        linguagens:
+            linguagens,
+
+        dataCriacao:
+            new Date().toLocaleString()
+
     };
 
-    sistema.jogadores.push(jogador);
+
+    // Adiciona o jogador ao sistema
+
+    sistema.jogadores.push(
+        jogador
+    );
+
+
+    // Salva no LocalStorage
 
     salvarJogadores();
-    renderizarJogadores(); 
+
+
+    // Atualiza a lista
+
+    renderizarJogadores();
+
+
+    // Guarda o jogador que acabou de enviar
+    // para o botão JOGAR
+
+    jogadorProntoParaJogar =
+        jogador;
+
+
+    // Libera o botão JOGAR
+
+    liberarBotaoJogar();
+
+
+    // Limpa a ficha
+
     limparFormulario();
-    verificarStatusBotaoJogar(); 
+
 }
 
+
 // ======================================================
-// CARREGAR DADOS (READ)
+// READ
 // ======================================================
+
 function carregarJogadores() {
-    const dados = localStorage.getItem(CONFIG.chaveLocalStorage);
-    if (!dados) return;
+
+    const dados =
+        localStorage.getItem(
+            CONFIG.chaveLocalStorage
+        );
+
+
+    if (!dados) {
+
+        return;
+
+    }
+
 
     try {
-        sistema.jogadores = JSON.parse(dados);
+
+        sistema.jogadores =
+            JSON.parse(dados);
+
     } catch (erro) {
-        console.error("Erro ao carregar astronautas:", erro);
+
+        console.error(
+            "Erro ao carregar astronautas:",
+            erro
+        );
+
         sistema.jogadores = [];
+
     }
+
 }
 
+
 // ======================================================
-// ATUALIZAR (UPDATE)
+// UPDATE
 // ======================================================
+
 function atualizarJogador() {
-    const id = Number(campoId.value);
-    const jogador = encontrarJogador(id);
+
+    const id =
+        Number(campoId.value);
+
+
+    const jogador =
+        encontrarJogador(id);
+
 
     if (!jogador) {
-        alert("Astronauta não encontrado.");
+
+        alert(
+            "Astronauta não encontrado."
+        );
+
         return;
+
     }
 
-    const linguagens = [];
-    if (checkHtml && checkHtml.checked) linguagens.push("HTML");
-    if (checkCss && checkCss.checked) linguagens.push("CSS");
-    if (checkJavascript && checkJavascript.checked) linguagens.push("JAVASCRIPT");
 
-    jogador.nome = campoNome.value.trim();
-    jogador.nickname = campoNickname.value.trim();
-    jogador.idade = Number(campoIdade.value);
-    jogador.linguagens = linguagens;
+    const linguagens = [];
+
+
+    if (checkHtml.checked) {
+
+        linguagens.push("HTML");
+
+    }
+
+
+    if (checkCss.checked) {
+
+        linguagens.push("CSS");
+
+    }
+
+
+    if (checkJavascript.checked) {
+
+        linguagens.push("JAVASCRIPT");
+
+    }
+
+
+    jogador.nome =
+        campoNome.value.trim();
+
+
+    jogador.nickname =
+        campoNickname.value.trim();
+
+
+    jogador.idade =
+        Number(campoIdade.value);
+
+
+    jogador.linguagens =
+        linguagens;
+
+
+    // Salva alteração
 
     salvarJogadores();
+
+
+    // Atualiza lista
+
     renderizarJogadores();
+
+
+    // O jogador atualizado fica pronto para jogar
+
+    jogadorProntoParaJogar =
+        jogador;
+
+
+    // Libera o botão
+
+    liberarBotaoJogar();
+
+
+    // Limpa formulário
+
     limparFormulario();
-    verificarStatusBotaoJogar();
+
 }
+
+
+// ======================================================
+// DELETE
+// ======================================================
+
+function excluirJogador(id) {
+
+    const jogador =
+        encontrarJogador(id);
+
+
+    if (!jogador) {
+
+        alert(
+            "Astronauta não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    const confirmou =
+        confirm(
+            `Deseja realmente excluir o astronauta "${jogador.nickname}"?`
+        );
+
+
+    if (!confirmou) {
+
+        return;
+
+    }
+
+
+    sistema.jogadores =
+        sistema.jogadores.filter(
+            function (item) {
+
+                return item.id !== id;
+
+            }
+        );
+
+
+    // Se o jogador excluído era o jogador
+    // que estava pronto para jogar
+
+    if (
+        jogadorProntoParaJogar &&
+        jogadorProntoParaJogar.id === id
+    ) {
+
+        jogadorProntoParaJogar =
+            null;
+
+        fichaEnviada =
+            false;
+
+        btnJogar.disabled =
+            true;
+
+    }
+
+
+    salvarJogadores();
+
+    renderizarJogadores();
+
+    limparFormulario();
+
+}
+
+
+// ======================================================
+// ENCONTRAR JOGADOR
+// ======================================================
+
+function encontrarJogador(id) {
+
+    return sistema.jogadores.find(
+        function (jogador) {
+
+            return jogador.id === id;
+
+        }
+    );
+
+}
+
+
+// ======================================================
+// LOCAL STORAGE
+// ======================================================
+
+function salvarJogadores() {
+
+    localStorage.setItem(
+
+        CONFIG.chaveLocalStorage,
+
+        JSON.stringify(
+            sistema.jogadores
+        )
+
+    );
+
+}
+
+
+// ======================================================
+// RENDERIZAÇÃO
+// ======================================================
+
+function renderizarJogadores() {
+
+    if (!listaJogadores) {
+
+        return;
+
+    }
+
+
+    listaJogadores.replaceChildren();
+
+
+    // Contador
+
+    if (contador) {
+
+        contador.textContent =
+            `Total de Astronautas: ${sistema.jogadores.length}`;
+
+    }
+
+
+    // Lista vazia
+
+    if (
+        sistema.jogadores.length === 0
+    ) {
+
+        criarMensagemListaVazia();
+
+        return;
+
+    }
+
+
+    // Cria os cards
+
+    sistema.jogadores.forEach(
+        function (jogador) {
+
+            const card =
+                criarCardJogador(
+                    jogador
+                );
+
+
+            listaJogadores.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+// ======================================================
+// CRIAR CARD
+// ======================================================
+
+function criarCardJogador(jogador) {
+
+    const card =
+        document.createElement("article");
+
+
+    card.classList.add(
+        "card"
+    );
+
+
+    // ==================================================
+    // TÍTULO
+    // ==================================================
+
+    const titulo =
+        document.createElement("h3");
+
+
+    titulo.textContent =
+        jogador.nickname;
+
+
+    // ==================================================
+    // NOME
+    // ==================================================
+
+    const nome =
+        criarInformacao(
+            "Nome:",
+            jogador.nome
+        );
+
+
+    // ==================================================
+    // IDADE
+    // ==================================================
+
+    const idade =
+        criarInformacao(
+            "Idade:",
+            jogador.idade
+        );
+
+
+    // ==================================================
+    // LINGUAGENS
+    // ==================================================
+
+    const linguagens =
+        criarInformacao(
+            "Linguagens:",
+            jogador.linguagens.join(", ") ||
+            "Nenhuma"
+        );
+
+
+    // ==================================================
+    // AÇÕES
+    // ==================================================
+
+    const acoes =
+        document.createElement("div");
+
+
+    acoes.classList.add(
+        "acoes"
+    );
+
+
+    // ==================================================
+    // BOTÃO EDITAR
+    // ==================================================
+
+    const botaoEditar =
+        document.createElement("button");
+
+
+    botaoEditar.textContent =
+        "✏️ Editar";
+
+
+    botaoEditar.addEventListener(
+        "click",
+        function () {
+
+            prepararEdicao(
+                jogador.id
+            );
+
+        }
+    );
+
+
+    // ==================================================
+    // BOTÃO EXCLUIR
+    // ==================================================
+
+    const botaoExcluir =
+        document.createElement("button");
+
+
+    botaoExcluir.textContent =
+        "🗑️ Excluir";
+
+
+    botaoExcluir.classList.add(
+        "botao-excluir"
+    );
+
+
+    botaoExcluir.addEventListener(
+        "click",
+        function () {
+
+            excluirJogador(
+                jogador.id
+            );
+
+        }
+    );
+
+
+    // ==================================================
+    // MONTA OS BOTÕES
+    // ==================================================
+
+    acoes.appendChild(
+        botaoEditar
+    );
+
+
+    acoes.appendChild(
+        botaoExcluir
+    );
+
+
+    // ==================================================
+    // MONTA O CARD
+    // ==================================================
+
+    card.appendChild(
+        titulo
+    );
+
+
+    card.appendChild(
+        nome
+    );
+
+
+    card.appendChild(
+        idade
+    );
+
+
+    card.appendChild(
+        linguagens
+    );
+
+
+    card.appendChild(
+        acoes
+    );
+
+
+    return card;
+
+}
+
+
+// ======================================================
+// CRIAR INFORMAÇÃO DO CARD
+// ======================================================
+
+function criarInformacao(
+    rotulo,
+    valor
+) {
+
+    const paragrafo =
+        document.createElement("p");
+
+
+    const destaque =
+        document.createElement("strong");
+
+
+    destaque.textContent =
+        rotulo + " ";
+
+
+    paragrafo.appendChild(
+        destaque
+    );
+
+
+    paragrafo.append(
+        String(valor)
+    );
+
+
+    return paragrafo;
+
+}
+
+
+// ======================================================
+// MENSAGEM DE LISTA VAZIA
+// ======================================================
+
+function criarMensagemListaVazia() {
+
+    const mensagem =
+        document.createElement("div");
+
+
+    mensagem.classList.add(
+        "lista-vazia"
+    );
+
+
+    const titulo =
+        document.createElement("p");
+
+
+    titulo.textContent =
+        "🚀 Nenhum astronauta cadastrado";
+
+
+    mensagem.appendChild(
+        titulo
+    );
+
+
+    listaJogadores.appendChild(
+        mensagem
+    );
+
+}
+
 
 // ======================================================
 // PREPARAR EDIÇÃO
 // ======================================================
+
 function prepararEdicao(id) {
-    const jogador = encontrarJogador(id);
-    if (!jogador) return;
 
-    campoId.value = jogador.id;
-    campoNome.value = navigator.nome; 
-    campoNome.value = jogador.nome;
-    campoNickname.value = jogador.nickname;
-    campoIdade.value = jogador.idade;
+    const jogador =
+        encontrarJogador(id);
 
-    checkHtml.checked = jogador.linguagens.includes("HTML");
-    checkCss.checked = jogador.linguagens.includes("CSS");
-    checkJavascript.checked = jogador.linguagens.includes("JAVASCRIPT");
 
-    btnSalvar.textContent = "⚙️ ATUALIZAR";
+    if (!jogador) {
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "idJogador"
+    ).value =
+        jogador.id;
+
+
+    campoNome.value =
+        jogador.nome;
+
+
+    campoNickname.value =
+        jogador.nickname;
+
+
+    campoIdade.value =
+        jogador.idade;
+
+
+    checkHtml.checked =
+        jogador.linguagens.includes(
+            "HTML"
+        );
+
+
+    checkCss.checked =
+        jogador.linguagens.includes(
+            "CSS"
+        );
+
+
+    checkJavascript.checked =
+        jogador.linguagens.includes(
+            "JAVASCRIPT"
+        );
+
+
+    btnSalvar.textContent =
+        "ATUALIZAR";
+
+
     campoNome.focus();
+
 }
+
 
 // ======================================================
-// EXCLUIR (DELETE)
+// LIMPAR FORMULÁRIO
 // ======================================================
-function excluirJogador(id) {
-    const jogador = encontrarJogador(id);
-    if (!jogador) return;
-
-    const confirmou = confirm(`Deseja realmente excluir o astronauta "${jogador.nickname}"?`);
-    if (!confirmou) return;
-
-    sistema.jogadores = sistema.jogadores.filter(item => item.id !== id);
-
-    salvarJogadores();
-    renderizarJogadores();
-    limparFormulario();
-    verificarStatusBotaoJogar(); 
-}
-
-function encontrarJogador(id) {
-    return sistema.jogadores.find(jogador => jogador.id === id);
-}
-
-function salvarJogadores() {
-    localStorage.setItem(CONFIG.chaveLocalStorage, JSON.stringify(sistema.jogadores));
-}
-
-// ======================================================
-// DESENHAR ELEMENTOS NA TELA (RENDERIZAÇÃO RESTAURADA)
-// ======================================================
-function criarInformacao(rotulo, valor) {
-    const p = document.createElement("p");
-    p.style.margin = "5px 0";
-    p.innerHTML = `<strong>${rotulo}</strong> ${valor}`;
-    return p;
-}
-
-function criarMensagemListaVazia() {
-    const p = document.createElement("p");
-    p.textContent = "Nenhum astronauta registrado na órbita.";
-    p.style.textAlign = "center";
-    p.style.opacity = "0.6";
-    listaJogadores.appendChild(p);
-}
 
 function limparFormulario() {
+
     formulario.reset();
-    campoId.value = "";
-    btnSalvar.textContent = "ENVIAR";
-}
 
-function renderizarJogadores() {
-    if (!listaJogadores) return;
-    listaJogadores.innerHTML = ""; 
 
-    if (contador) {
-        contador.textContent = `Total de Astronautas: ${sistema.jogadores.length}`;
+    const campoIdAtual =
+        document.getElementById(
+            "idJogador"
+        );
+
+
+    if (campoIdAtual) {
+
+        campoIdAtual.value =
+            "";
+
     }
 
-    if (sistema.jogadores.length === 0) {
-        criarMensagemListaVazia();
+
+    btnSalvar.textContent =
+        "ENVIAR";
+
+}
+
+
+// ======================================================
+// LIBERAR BOTÃO JOGAR
+// ======================================================
+
+function liberarBotaoJogar() {
+
+    fichaEnviada =
+        true;
+
+
+    btnJogar.disabled =
+        false;
+
+
+    btnJogar.textContent =
+        "JOGAR";
+
+}
+
+
+// ======================================================
+// JOGAR
+// ======================================================
+
+function jogar() {
+
+    // ==================================================
+    // VERIFICA SE A FICHA FOI ENVIADA
+    // ==================================================
+
+    if (
+        !fichaEnviada ||
+        !jogadorProntoParaJogar
+    ) {
+
+        alert(
+            "Primeiro preencha e envie a ficha do astronauta."
+        );
+
         return;
+
     }
 
-    sistema.jogadores.forEach(function (jogador) {
-        const card = criarCardJogador(jogador);
-        listaJogadores.appendChild(card);
-    });
+
+    // ==================================================
+    // SALVA O JOGADOR ATUAL
+    // ==================================================
+
+    localStorage.setItem(
+
+        "jogadorAtual",
+
+        JSON.stringify(
+            jogadorProntoParaJogar
+        )
+
+    );
+
+
+    // ==================================================
+    // VAI PARA A PÁGINA DO JOGO
+    // ==================================================
+
+    window.location.href =
+        "http://127.0.0.1:5500/game/pato.html";
+
 }
-
-function criarCardJogador(jogador) {
-    const card = document.createElement("article");
-    card.classList.add("card");
-    card.style.marginTop = "15px";
-
-    const titulo = document.createElement("h3");
-    titulo.style.color = "#a4e4e4";
-    titulo.style.margin = "0 0 10px 0";
-    titulo.textContent = jogador.nickname;
-    card.appendChild(titulo);
-
-    const nome = criarInformacao("Nome:", jogador.nome);
-    const idade = criarInformacao("Idade:", jogador.idade);
-    const linguagens = criarInformacao("Linguagens:", jogador.linguagens.join(", ") || "Nenhuma");
-
-    card.appendChild(nome);
-    card.appendChild(idade);
-    card.appendChild(linguagens);
-
-    const acoes = document.createElement("div");
-    acoes.style.marginTop = "15px";
-    acoes.style.display = "flex";
-    acoes.style.gap = "10px";
-
-    const botaoEditar = document.createElement("button");
-    botaoEditar.type = "button";
-    botaoEditar.textContent = "✏️ Editar";
-    botaoEditar.addEventListener("click", () => prepararEdicao(jogador.id));
-
-    const botaoExcluir = document.createElement("button");
-    botaoExcluir.type = "button";
-    botaoExcluir.textContent = "🗑️ Excluir";
-    botaoExcluir.style.background = "#440b0b";
-    botaoExcluir.style.color = "white";
-    botaoExcluir.style.border = "none";
-    botaoExcluir.style.padding = "6px 12px";
-    botaoExcluir.style.borderRadius = "4px";
-    botaoExcluir.style.cursor = "pointer";
-    botaoExcluir.addEventListener("click", () => excluirJogador(jogador.id));
-
-    acoes.appendChild(botaoEditar);
-    acoes.appendChild(botaoExcluir);
-    card.appendChild(acoes);
-
-    return card;
-}
-
 
