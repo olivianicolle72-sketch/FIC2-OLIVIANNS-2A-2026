@@ -1,6 +1,179 @@
-body{
-    background-image: url(url();
+@font-face {
+  font-family: 'game';
+  src: url(Games-Italic.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+    background-image: url(../img/wp16158486.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'game', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+/* Estilização do Título Principal */
+header.br {
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ac5136, 0 0 20px #4d0606;
+}
+
+header h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+/* Container do Formulário */
+.container {
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #830606;
+    box-shadow: 0 0 15px #550000;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+}
+
+.container h2 {
+    color: #a4e4e4;
+    text-align: center;
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+/* Textos informativos */
+.container p {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+/* Campos de entrada (Inputs) */
+input[type="text"], 
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: #111;
+    border: 1px solid #555;
+    color: white;
+    font-family: 'game', sans-serif;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, 
+input[type="number"]:focus {
+    border-color: #31150c;
+    outline: none;
+    box-shadow: 0 0 8px #b32c2c;
+}
+
+/* Seção de Checkboxes Corrigida */
+.checkbox-container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 5px;
+    border: 1px dashed #555;
+    text-align: center;
+}
+
+.options {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+input[type="checkbox"] {
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+label {
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Botões (ENVIAR e JOGAR) */
+#ENVIAR, #JOGAR {
+    width: 100%;
+    padding: 12px;
+    color: rgb(253, 242, 242);
+    border: none;
+    font-family: 'game', sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+#ENVIAR {
+    background: #440b0b;
+}
+
+#ENVIAR:hover {
+    background: #8f0000;
+    box-shadow: 0 0 15px #fff;
+    transform: scale(1.02);
+}
+
+#JOGAR {
+    background: #125e19;
+}
+
+#JOGAR:hover:not(:disabled) {
+    background: #1cb826;
+    box-shadow: 0 0 15px #fff;
+    transform: scale(1.02);
+}
+
+/* Estado do botão PLAY quando estiver bloqueado */
+#JOGAR:disabled {
+    background: #222;
+    color: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    opacity: 0.4;
+}
+
+/* Estilo para os cards de jogadores gerados */
+.card {
+    background: black;
+    border: 1px solid #fff;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card button {
+    font-family: 'game', sans-serif;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
