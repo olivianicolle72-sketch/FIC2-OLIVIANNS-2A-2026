@@ -1,0 +1,107 @@
+
+body {
+    background-image: url(../img/buraco.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden; 
+    transition: background-image 0.5s ease-in-out;
+    font-family: 'SPACE';
+}
+
+@font-face {
+    font-family: 'SPACE';
+    src: url(Games-Italic.ttf);
+}
+
+
+
+body.jogo {
+    background-image: url(../img/terra.jpg); 
+}
+
+
+#game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; 
+    transition: opacity 0.4s ease;
+}
+
+
+.sumir {
+    display: none !important;
+}
+
+.container {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Botão Play */
+#play {
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: 'SPACE';
+}
+
+#play:hover {
+    background-color: #00bfff;
+    transform: scale(1.05); 
+}
+
+
+#Volta {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    background: rgba(0, 0, 0, 0.4); 
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 10; 
+    transition: all 0.3s ease;
+}
+
+#Volta:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+
+#lua-linha {
+    width: 100%; 
+    height: 120px; 
+    position: absolute; 
+    bottom: -150px; 
+    left: 0;
+    background-image: url(../img/images.jpeg);
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    box-shadow: 0px -5px 15px rgba(255, 255, 255, 0.3);
+    transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+
+#lua-linha.expandir-linha {
+    bottom: 0;
+}
+
