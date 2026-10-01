@@ -41,7 +41,7 @@ body.jogo {
 }
 
 .container {
-    font-size: 3rem;
+    font-size: 180px; /*3rem*/
     margin-bottom: 20px;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
 }
@@ -49,12 +49,12 @@ body.jogo {
 /* Botão Play */
 #play {
     padding: 12px 30px;
-    font-size: 1.2rem;
+    font-size:   1.2rem;
     cursor: pointer;
     background-color: #f9d5ff;
     color: rgb(12, 11, 11);
     border: none;
-    border-radius: 5550px;
+    border-radius: 50px;
     transition: background-color 0.3s, transform 0.2s;
     font-family: 'SPACE';
 }
