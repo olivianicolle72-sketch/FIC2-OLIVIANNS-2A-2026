@@ -2,8 +2,6 @@ const CONFIG = {
     chaveLocalStorage: "astronauta"
 };
 
-const PAGINA_DO_JOGO = "/game/pato.html";
-
 const formulario = document.getElementById("from");
 const campoId = document.getElementById("idJogador");
 const campoNome = document.getElementById("nome");
@@ -247,11 +245,13 @@ function jogar() {
         return;
     }
 
+    // Salva os dados do jogador
     localStorage.setItem(
         "jogadorAtual",
         JSON.stringify(astronauta)
     );
 
-  
+    // Abre a página do jogo
+    window.location.href =
+        "http://127.0.0.1:5500/game/pato.html";
 }
-
