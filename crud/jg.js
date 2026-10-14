@@ -2,7 +2,7 @@
 const CONFIG = {
     chaveLocalStorage: "astronauta",
     chaveJogadorAtual: "jogadorAtual",
-    paginaJogo: "http://localhost:7700/game/pato.html"
+    paginaJogo: "http://127.0.0.1:5500/game/pato.html"
 };
 
 const formulario = document.getElementById("from");
