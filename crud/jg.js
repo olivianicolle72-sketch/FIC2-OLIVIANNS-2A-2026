@@ -1,5 +1,8 @@
+
 const CONFIG = {
-    chaveLocalStorage: "astronauta"
+    chaveLocalStorage: "astronauta",
+    chaveJogadorAtual: "jogadorAtual",
+    paginaJogo: "http://localhost:7700/game/pato.html"
 };
 
 const formulario = document.getElementById("from");
@@ -14,13 +17,35 @@ const btnJogar = document.getElementById("JOGAR");
 
 let astronauta = null;
 
-carregarAstronauta();
-renderizarAstronauta();
+if (
+    !formulario ||
+    !campoId ||
+    !campoNome ||
+    !campoNickname ||
+    !campoIdade ||
+    !listaJogadores ||
+    !contador ||
+    !btnSalvar ||
+    !btnJogar
+) {
+    console.error(
+        "Erro: confira os IDs dos elementos no HTML."
+    );
+} else {
+    inicializar();
+}
 
-btnJogar.disabled = !astronauta;
+function inicializar() {
+    carregarAstronauta();
+    renderizarAstronauta();
 
-btnSalvar.addEventListener("click", salvarAstronauta);
-btnJogar.addEventListener("click", jogar);
+    btnJogar.disabled = !astronauta;
+
+    formulario.addEventListener("submit", salvarAstronauta);
+    btnJogar.addEventListener("click", jogar);
+
+    btnSalvar.type = "submit";
+}
 
 function getGenero() {
     const selecionado = document.querySelector(
@@ -50,7 +75,12 @@ function salvarAstronauta(evento) {
         return;
     }
 
-    if (isNaN(idade) || idade < 18 || idade > 50) {
+    if (
+        campoIdade.value.trim() === "" ||
+        !Number.isFinite(idade) ||
+        idade < 18 ||
+        idade > 50
+    ) {
         alert("A idade deve estar entre 18 e 50 anos.");
         campoIdade.focus();
         return;
@@ -61,34 +91,48 @@ function salvarAstronauta(evento) {
         return;
     }
 
-    if (astronauta) {
-        astronauta.nome = nome;
-        astronauta.nickname = nickname;
-        astronauta.idade = idade;
-        astronauta.genero = genero;
+    const astronautaAnterior = astronauta;
 
-        alert("Astronauta atualizado com sucesso!");
+    if (astronauta) {
+        astronauta = {
+            ...astronauta,
+            nome,
+            nickname,
+            idade,
+            genero
+        };
     } else {
         astronauta = {
             id: Date.now(),
-            nome: nome,
-            nickname: nickname,
-            idade: idade,
-            genero: genero
+            nome,
+            nickname,
+            idade,
+            genero
         };
-
-        alert("Astronauta cadastrado com sucesso!");
     }
 
-    localStorage.setItem(
-        CONFIG.chaveLocalStorage,
-        JSON.stringify(astronauta)
-    );
+    try {
+        localStorage.setItem(
+            CONFIG.chaveLocalStorage,
+            JSON.stringify(astronauta)
+        );
+    } catch (erro) {
+        astronauta = astronautaAnterior;
+        console.error("Erro ao salvar astronauta:", erro);
+        alert("Não foi possível salvar os dados.");
+        return;
+    }
 
     btnJogar.disabled = false;
 
     renderizarAstronauta();
     limparFormulario();
+
+    alert(
+        astronautaAnterior
+            ? "Astronauta atualizado com sucesso!"
+            : "Astronauta cadastrado com sucesso!"
+    );
 }
 
 function carregarAstronauta() {
@@ -97,13 +141,16 @@ function carregarAstronauta() {
     );
 
     if (!dados) {
+        astronauta = null;
         return;
     }
 
     try {
         astronauta = JSON.parse(dados);
-    } catch {
+    } catch (erro) {
+        console.error("Erro ao carregar astronauta:", erro);
         astronauta = null;
+        localStorage.removeItem(CONFIG.chaveLocalStorage);
     }
 }
 
@@ -111,117 +158,86 @@ function renderizarAstronauta() {
     listaJogadores.innerHTML = "";
 
     if (!astronauta) {
-        contador.textContent =
-            "Nenhum astronauta cadastrado";
+        contador.textContent = "Nenhum astronauta cadastrado";
 
-        listaJogadores.innerHTML =
-            "<div class='lista-vazia'>🚀 Nenhum astronauta cadastrado</div>";
+        const mensagem = document.createElement("div");
+        mensagem.className = "lista-vazia";
+        mensagem.textContent = "Nenhum astronauta cadastrado";
 
+        listaJogadores.appendChild(mensagem);
         return;
     }
 
-    contador.textContent =
-        "Astronauta cadastrado";
+    contador.textContent = "Astronauta cadastrado";
 
     const card = document.createElement("article");
-
     card.className = "card";
 
-    card.innerHTML = `
-        <h3>${astronauta.nickname}</h3>
+    const titulo = document.createElement("h3");
+    titulo.textContent = astronauta.nickname;
 
-        <p>
-            <strong>Nome:</strong>
-            ${astronauta.nome}
-        </p>
+    const nome = document.createElement("p");
+    nome.textContent = `Nome: ${astronauta.nome}`;
 
-        <p>
-            <strong>Idade:</strong>
-            ${astronauta.idade}
-        </p>
+    const idade = document.createElement("p");
+    idade.textContent = `Idade: ${astronauta.idade}`;
 
-        <p>
-            <strong>Gênero:</strong>
-            ${astronauta.genero}
-        </p>
+    const genero = document.createElement("p");
+    genero.textContent = `Gênero: ${astronauta.genero}`;
 
-        <div class="acoes">
-            <button id="editarAstronauta">
-                ✏️ Editar
-            </button>
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
 
-            <button id="excluirAstronauta" class="botao-excluir">
-                🗑️ Excluir
-            </button>
-        </div>
-    `;
+    const btnEditar = document.createElement("button");
+    btnEditar.type = "button";
+    btnEditar.textContent = "Editar";
+    btnEditar.addEventListener("click", editarAstronauta);
 
+    const btnExcluir = document.createElement("button");
+    btnExcluir.type = "button";
+    btnExcluir.className = "botao-excluir";
+    btnExcluir.textContent = "Excluir";
+    btnExcluir.addEventListener("click", excluirAstronauta);
+
+    acoes.append(btnEditar, btnExcluir);
+    card.append(titulo, nome, idade, genero, acoes);
     listaJogadores.appendChild(card);
-
-    document
-        .getElementById("editarAstronauta")
-        .addEventListener(
-            "click",
-            editarAstronauta
-        );
-
-    document
-        .getElementById("excluirAstronauta")
-        .addEventListener(
-            "click",
-            excluirAstronauta
-        );
 }
 
 function editarAstronauta() {
+    if (!astronauta) return;
+
     campoId.value = astronauta.id;
+    campoNome.value = astronauta.nome;
+    campoNickname.value = astronauta.nickname;
+    campoIdade.value = astronauta.idade;
 
-    campoNome.value =
-        astronauta.nome;
-
-    campoNickname.value =
-        astronauta.nickname;
-
-    campoIdade.value =
-        astronauta.idade;
-
-    const radio = document.querySelector(
-        `input[name="genero"][value="${astronauta.genero}"]`
+    document.querySelectorAll('input[name="genero"]').forEach(
+        function (radio) {
+            radio.checked = radio.value === astronauta.genero;
+        }
     );
 
-    if (radio) {
-        radio.checked = true;
-    }
-
-    btnSalvar.textContent =
-        "ATUALIZAR";
-
+    btnSalvar.textContent = "ATUALIZAR";
     campoNome.focus();
 }
 
 function excluirAstronauta() {
-    if (!astronauta) {
-        return;
-    }
+    if (!astronauta) return;
 
     const confirmou = confirm(
         `Deseja excluir o astronauta "${astronauta.nickname}"?`
     );
 
-    if (!confirmou) {
-        return;
-    }
+    if (!confirmou) return;
 
-    localStorage.removeItem(
-        CONFIG.chaveLocalStorage
-    );
+    localStorage.removeItem(CONFIG.chaveLocalStorage);
+    localStorage.removeItem(CONFIG.chaveJogadorAtual);
 
     astronauta = null;
-
     btnJogar.disabled = true;
 
     renderizarAstronauta();
-
     limparFormulario();
 
     alert("Astronauta excluído com sucesso!");
@@ -229,29 +245,36 @@ function excluirAstronauta() {
 
 function limparFormulario() {
     formulario.reset();
-
     campoId.value = "";
-
-    btnSalvar.textContent =
-        "ENVIAR";
+    btnSalvar.textContent = "ENVIAR";
 }
 
 function jogar() {
     if (!astronauta) {
-        alert(
-            "Cadastre seu astronauta primeiro."
-        );
-
+        alert("Cadastre seu astronauta primeiro.");
         return;
     }
 
-    // Salva os dados do jogador
-    localStorage.setItem(
-        "jogadorAtual",
-        JSON.stringify(astronauta)
-    );
+    try {
+        const dadosSalvos = localStorage.getItem(
+            CONFIG.chaveLocalStorage
+        );
 
-    // Abre a página do jogo
-    window.location.href =
-        "http://127.0.0.1:5500/game/pato.html";
+        if (!dadosSalvos) {
+            alert("Cadastre seu astronauta primeiro.");
+            btnJogar.disabled = true;
+            return;
+        }
+
+        localStorage.setItem(
+            CONFIG.chaveJogadorAtual,
+            dadosSalvos
+        );
+
+        window.location.href = CONFIG.paginaJogo;
+
+    } catch (erro) {
+        console.error("Erro ao iniciar o jogo:", erro);
+        alert("Não foi possível iniciar o jogo.");
+    }
 }
