@@ -1,4 +1,3 @@
-
 const playButton = document.getElementById("play");
 const voltaButton = document.getElementById("Volta");
 const wrapper = document.getElementById("game-wrapper");
@@ -7,6 +6,7 @@ const luaLinha = document.getElementById("lua-linha");
 const jogadorNome = document.getElementById("jogador-nome");
 const jogadorNickname = document.getElementById("jogador-nickname");
 const personagem = document.getElementById("personagem");
+const personagemContainer = document.getElementById("personagem-container");
 
 const vidasElementos = document.querySelectorAll(".vida");
 const areaObstaculos = document.getElementById("area-obstaculos");
@@ -14,27 +14,24 @@ const telaImpacto = document.getElementById("tela-impacto");
 const gameOver = document.getElementById("game-over");
 const reiniciarButton = document.getElementById("reiniciar");
 
-// Imagens dos personagens
 const imagensAstronauta = {
     Feminino: "/img%20Jogo/person/astroF.png",
     Neutro: "/img%20Jogo/person/astroGN.png",
     Masculino: "/img%20Jogo/person/AstroM.png"
 };
 
-// Imagens dos obstáculos
 const imagensObstaculos = {
     meteoro: "/img%20Jogo/metoro.png",
     alien: "/img%20Jogo/decoration/ALIEEEn.png",
     estrela: "/img%20Jogo/estrela.png"
 };
 
-// Configurações do jogo
 const CONFIG = {
     vidasIniciais: 3,
     alturaPulo: 125,
-    duracaoPulo: 650,
-    velocidadeInicial: 310,
-    intervaloObstaculos: 1800,
+    duracaoPulo: 850,
+    velocidadeInicial: 250,
+    intervaloObstaculos: 2300,
     tempoReinicio: 800
 };
 
@@ -46,21 +43,16 @@ let gameEncerrado = false;
 let emRecuperacao = false;
 
 let alturaAtual = 0;
-let velocidadeVertical = 0;
 let quantidadePulos = 0;
-
 let obstaculos = [];
 let indiceSequencia = 0;
 
 let ultimoTempo = 0;
-let tempoSpawn = 0;
-let proximoObstaculo = null;
+let tempoPulo = 0;
 let animacaoId = null;
 let temporizadorSpawn = null;
 let temporizadorImpacto = null;
 
-// A sequência garante dois aliens consecutivos
-// antes da estrela surpresa.
 const sequenciaObstaculos = [
     "meteoro",
     "alien",
@@ -68,31 +60,21 @@ const sequenciaObstaculos = [
     "estrela"
 ];
 
-// Carrega os dados salvos pelo CRUD
 function carregarJogador() {
     try {
         const dados = localStorage.getItem("jogadorAtual");
-
-        if (!dados) {
-            return null;
-        }
-
-        return JSON.parse(dados);
+        return dados ? JSON.parse(dados) : null;
     } catch (erro) {
         console.error("Erro ao carregar jogador:", erro);
         return null;
     }
 }
 
-// Mostra o nome, o nick e o personagem
 function mostrarAstronauta() {
     jogador = carregarJogador();
 
     if (!jogador) {
-        alert(
-            "Nenhum astronauta encontrado. Volte ao cadastro e salve seu personagem."
-        );
-
+        alert("Nenhum astronauta encontrado. Volte ao cadastro e salve seu personagem.");
         return false;
     }
 
@@ -116,15 +98,12 @@ function mostrarAstronauta() {
     return true;
 }
 
-// Atualiza as três vidas
 function atualizarVidas() {
     vidasElementos.forEach(function (vida, indice) {
         const continuaViva = indice < vidas;
 
         vida.classList.toggle("perdida", !continuaViva);
-        vida.alt = continuaViva
-            ? "Vida disponível"
-            : "Vida perdida";
+        vida.alt = continuaViva ? "Vida disponível" : "Vida perdida";
     });
 
     document.getElementById("vidas").setAttribute(
@@ -133,17 +112,17 @@ function atualizarVidas() {
     );
 }
 
-// Prepara o personagem para um novo jogo
 function prepararPersonagem() {
     alturaAtual = 0;
-    velocidadeVertical = 0;
     quantidadePulos = 0;
+    tempoPulo = 0;
 
-    personagem.style.transform = "translateY(0)";
+    personagemContainer.style.transition = "none";
+    personagemContainer.style.transform = "translateY(0)";
+
+    void personagemContainer.offsetHeight;
 }
 
-// Executa um salto.
-// É possível saltar até três vezes antes de tocar no chão.
 function pular() {
     if (!jogoAtivo || gameEncerrado || emRecuperacao) {
         return;
@@ -155,38 +134,23 @@ function pular() {
 
     quantidadePulos++;
 
-    // O salto seguinte eleva mais o personagem.
     alturaAtual = CONFIG.alturaPulo * quantidadePulos;
+    tempoPulo = 0;
 
-    // O tempo de retorno é calculado pela altura atingida.
-    velocidadeVertical = alturaAtual / (CONFIG.duracaoPulo * quantidadePulos / 1000);
-
-    // Animação visual do salto.
-    personagem.style.transition = "transform 0.16s ease-out";
-    personagem.style.transform =
+    personagemContainer.style.transition = "transform 0.12s ease-out";
+    personagemContainer.style.transform =
         "translateY(-" + alturaAtual + "px)";
-
-    // Retira a transição para o movimento de descida.
-    setTimeout(function () {
-        if (jogoAtivo && !gameEncerrado) {
-            personagem.style.transition = "transform 0.3s ease-in";
-        }
-    }, 160);
 }
 
-// Retorna o personagem ao chão
 function voltarAoChao() {
-    personagem.style.transition =
-        "transform 0.3s ease-in";
-
-    personagem.style.transform = "translateY(0)";
+    personagemContainer.style.transition = "transform 0.3s ease-in";
+    personagemContainer.style.transform = "translateY(0)";
 
     alturaAtual = 0;
-    velocidadeVertical = 0;
     quantidadePulos = 0;
+    tempoPulo = 0;
 }
 
-// Cria um obstáculo na lateral direita
 function criarObstaculo(tipo) {
     if (!jogoAtivo || gameEncerrado || emRecuperacao) {
         return;
@@ -200,10 +164,7 @@ function criarObstaculo(tipo) {
     imagem.draggable = false;
 
     imagem.onerror = function () {
-        console.error(
-            "Não foi possível carregar o obstáculo:",
-            imagem.src
-        );
+        console.error("Não foi possível carregar o obstáculo:", imagem.src);
     };
 
     areaObstaculos.appendChild(imagem);
@@ -216,7 +177,6 @@ function criarObstaculo(tipo) {
     });
 }
 
-// Escolhe o próximo obstáculo na sequência
 function agendarObstaculo() {
     if (!jogoAtivo || gameEncerrado || emRecuperacao) {
         return;
@@ -235,23 +195,21 @@ function agendarObstaculo() {
     );
 }
 
-// Verifica se dois elementos se encostam
 function colidiu(elementoA, elementoB) {
     const a = elementoA.getBoundingClientRect();
     const b = elementoB.getBoundingClientRect();
 
-    // Margem pequena para tornar a colisão menos injusta.
-    const margem = 12;
+    const margemHorizontal = 10;
+    const margemVertical = 8;
 
     return (
-        a.left + margem < b.right - margem &&
-        a.right - margem > b.left + margem &&
-        a.top + margem < b.bottom - margem &&
-        a.bottom - margem > b.top + margem
+        a.right - margemHorizontal > b.left + margemHorizontal &&
+        a.left + margemHorizontal < b.right - margemHorizontal &&
+        a.bottom - margemVertical > b.top + margemVertical &&
+        a.top + margemVertical < b.bottom - margemVertical
     );
 }
 
-// Remove todos os obstáculos da tela
 function limparObstaculos() {
     obstaculos.forEach(function (obstaculo) {
         obstaculo.elemento.remove();
@@ -261,7 +219,6 @@ function limparObstaculos() {
     areaObstaculos.innerHTML = "";
 }
 
-// Para os temporizadores e a animação
 function pararMovimento() {
     if (animacaoId !== null) {
         cancelAnimationFrame(animacaoId);
@@ -274,7 +231,6 @@ function pararMovimento() {
     }
 }
 
-// Mostra o efeito de colisão e tira uma vida
 function perderVida() {
     if (emRecuperacao || gameEncerrado || !jogoAtivo) {
         return;
@@ -285,15 +241,12 @@ function perderVida() {
 
     atualizarVidas();
 
-    // Interrompe temporariamente os movimentos.
     if (temporizadorSpawn !== null) {
         clearTimeout(temporizadorSpawn);
         temporizadorSpawn = null;
     }
 
     telaImpacto.classList.remove("ativo");
-
-    // Reinicia a animação preta.
     void telaImpacto.offsetWidth;
 
     telaImpacto.classList.add("ativo");
@@ -316,7 +269,6 @@ function perderVida() {
         return;
     }
 
-    // Retoma o cenário depois da tela preta.
     temporizadorImpacto = setTimeout(function () {
         if (gameEncerrado) {
             return;
@@ -332,7 +284,6 @@ function perderVida() {
     }, CONFIG.tempoReinicio);
 }
 
-// Movimento contínuo e detecção de colisão
 function atualizarJogo(tempoAtual) {
     if (!jogoAtivo || gameEncerrado || emRecuperacao) {
         animacaoId = null;
@@ -345,15 +296,11 @@ function atualizarJogo(tempoAtual) {
 
     ultimoTempo = tempoAtual;
 
-    // Velocidade dos obstáculos
     obstaculos.forEach(function (obstaculo) {
         obstaculo.x -= CONFIG.velocidadeInicial * delta;
-
-        obstaculo.elemento.style.left =
-            obstaculo.x + "px";
+        obstaculo.elemento.style.left = obstaculo.x + "px";
     });
 
-    // Remove os obstáculos que saíram da tela
     obstaculos = obstaculos.filter(function (obstaculo) {
         if (obstaculo.x + obstaculo.elemento.offsetWidth < 0) {
             obstaculo.elemento.remove();
@@ -363,7 +310,6 @@ function atualizarJogo(tempoAtual) {
         return true;
     });
 
-    // A colisão só é verificada quando o personagem está no jogo.
     for (const obstaculo of obstaculos) {
         if (
             !obstaculo.atingido &&
@@ -375,23 +321,20 @@ function atualizarJogo(tempoAtual) {
         }
     }
 
-    // O salto termina automaticamente.
     if (quantidadePulos > 0) {
-        tempoSpawn += delta * 1000;
+        tempoPulo += delta * 1000;
 
-        if (tempoSpawn >= CONFIG.duracaoPulo) {
+        if (tempoPulo >= CONFIG.duracaoPulo) {
             voltarAoChao();
-            tempoSpawn = 0;
         }
     }
 
     animacaoId = requestAnimationFrame(atualizarJogo);
 }
 
-// Inicia a animação
 function iniciarMovimento() {
     ultimoTempo = 0;
-    tempoSpawn = 0;
+    tempoPulo = 0;
 
     if (animacaoId !== null) {
         cancelAnimationFrame(animacaoId);
@@ -400,7 +343,6 @@ function iniciarMovimento() {
     animacaoId = requestAnimationFrame(atualizarJogo);
 }
 
-// Começa uma partida
 function iniciarJogo() {
     if (!mostrarAstronauta()) {
         return;
@@ -437,16 +379,13 @@ function iniciarJogo() {
     agendarObstaculo();
 }
 
-// Reinicia mantendo o mesmo cadastro
 function reiniciarJogo() {
     gameOver.classList.remove("visivel");
     iniciarJogo();
 }
 
-// Botão PLAY
 playButton.addEventListener("click", iniciarJogo);
 
-// Teclado: espaço ou seta para cima
 document.addEventListener("keydown", function (evento) {
     if (
         evento.code === "Space" ||
@@ -459,13 +398,11 @@ document.addEventListener("keydown", function (evento) {
     }
 });
 
-// Toque na tela para saltar
 document.addEventListener("pointerdown", function (evento) {
     if (!jogoAtivo || gameEncerrado) {
         return;
     }
 
-    // Ignora os botões e o painel de Game Over.
     if (
         evento.target.closest("#Volta") ||
         evento.target.closest("#game-over") ||
@@ -477,10 +414,8 @@ document.addEventListener("pointerdown", function (evento) {
     pular();
 });
 
-// Botão REINICIAR
 reiniciarButton.addEventListener("click", reiniciarJogo);
 
-// Botão voltar
 voltaButton.addEventListener("click", function () {
     if (jogoAtivo || gameEncerrado) {
         jogoAtivo = false;
@@ -509,11 +444,8 @@ voltaButton.addEventListener("click", function () {
     }
 });
 
-// Carrega os dados ao abrir a página
 jogador = carregarJogador();
 
 if (!jogador) {
-    console.warn(
-        "Nenhum jogador encontrado. Cadastre o astronauta antes de jogar."
-    );
+    console.warn("Nenhum jogador encontrado. Cadastre o astronauta antes de jogar.");
 }

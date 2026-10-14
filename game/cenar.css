@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 0;
@@ -15,11 +14,9 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
     width: 100%;
     height: 100vh;
     height: 100dvh;
-
     font-family: "SPACE", Arial, sans-serif;
     color: white;
     overflow: hidden;
@@ -37,8 +34,6 @@ body.tela-preta {
     background: #000 !important;
     background-image: none !important;
 }
-
-/* Tela inicial */
 
 #game-wrapper {
     display: flex;
@@ -82,8 +77,6 @@ body.tela-preta {
     transform: scale(1.05);
 }
 
-/* Botão voltar */
-
 #Volta {
     position: absolute;
     top: 20px;
@@ -97,8 +90,6 @@ body.tela-preta {
     cursor: pointer;
     z-index: 30;
 }
-
-/* Nick e vidas */
 
 #jogador-info {
     position: absolute;
@@ -143,18 +134,18 @@ body.jogo #jogador-info {
     filter: grayscale(1);
 }
 
-/* Personagem */
-
 #personagem-container {
     display: none;
     position: absolute;
     left: 12%;
-    bottom: 108px;
-    width: 180px;
+    bottom: 105px;
+    width: 200px;
     flex-direction: column;
     align-items: center;
     text-align: center;
     z-index: 4;
+    transform: translateY(0);
+    will-change: transform;
 }
 
 body.jogo #personagem-container {
@@ -163,7 +154,8 @@ body.jogo #personagem-container {
 
 #jogador-nome {
     font-size: clamp(1rem, 3vw, 1.5rem);
-    max-width: 220px;
+    width: 100%;
+    max-width: 240px;
     margin-bottom: 5px;
     overflow-wrap: anywhere;
     text-shadow: 0 0 10px #80bfff, 0 0 20px #508cff;
@@ -172,16 +164,15 @@ body.jogo #personagem-container {
 #personagem {
     display: block;
     width: auto;
-    height: clamp(140px, 25vh, 220px);
-    max-width: 150px;
+    height: clamp(220px, 32vh, 280px);
+    max-width: 190px;
     object-fit: contain;
-    transform: translateY(0);
+    object-position: bottom center;
+    transform: none;
     transform-origin: bottom center;
-    will-change: transform;
     filter: drop-shadow(0 0 10px rgba(150, 200, 255, 0.45));
+    flex-shrink: 0;
 }
-
-/* Área de obstáculos */
 
 #area-obstaculos {
     position: absolute;
@@ -193,30 +184,28 @@ body.jogo #personagem-container {
 
 .obstaculo {
     position: absolute;
-    bottom: 100px;
-    width: 75px;
-    height: 75px;
     object-fit: contain;
     will-change: left;
 }
 
 .obstaculo.meteoro {
+    bottom: 100px;
     width: 75px;
     height: 75px;
 }
 
 .obstaculo.alien {
+    bottom: 200px;
     width: 95px;
     height: 85px;
 }
 
 .obstaculo.estrela {
+    bottom: 300px;
     width: 78px;
     height: 78px;
     filter: drop-shadow(0 0 12px #ffe76b);
 }
-
-/* Chão lunar */
 
 #lua-linha {
     width: 100%;
@@ -236,8 +225,6 @@ body.jogo #personagem-container {
 #lua-linha.expandir-linha {
     bottom: 0;
 }
-
-/* Efeito de perder uma vida */
 
 #tela-impacto {
     position: fixed;
@@ -261,8 +248,6 @@ body.jogo #personagem-container {
         opacity: 0;
     }
 }
-
-/* Game Over */
 
 #game-over {
     display: none;
@@ -303,8 +288,6 @@ body.jogo #personagem-container {
     transform: scale(1.05);
 }
 
-/* Celulares */
-
 @media (max-width: 600px) {
     #jogador-info {
         top: 15px;
@@ -323,32 +306,35 @@ body.jogo #personagem-container {
     }
 
     #personagem-container {
-        left: 8%;
-        bottom: 92px;
-        width: 135px;
+        left: 5%;
+        bottom: 95px;
+        width: 155px;
     }
 
     #personagem {
-        height: clamp(125px, 22vh, 175px);
-        max-width: 120px;
+        height: clamp(180px, 27vh, 220px);
+        max-width: 145px;
     }
 
     #jogador-nome {
         font-size: 1rem;
+        max-width: 180px;
     }
 
-    .obstaculo {
+    .obstaculo.meteoro {
         bottom: 90px;
         width: 62px;
         height: 62px;
     }
 
     .obstaculo.alien {
+        bottom: 180px;
         width: 75px;
         height: 70px;
     }
 
     .obstaculo.estrela {
+        bottom: 265px;
         width: 65px;
         height: 65px;
     }
