@@ -11,6 +11,7 @@
 </head>
 
 <body>
+
     <!-- TELA INICIAL -->
     <div id="game-wrapper">
         <h1 class="container">SPACE WALL</h1>
@@ -24,9 +25,11 @@
 
     <!-- INFORMAÇÕES DO JOGADOR -->
     <header id="jogador-info">
+
         <span id="jogador-nickname"></span>
 
         <div id="vidas" aria-label="Três vidas restantes">
+
             <img
                 class="vida"
                 src="/img%20Jogo/decoration/astrocora%C3%A7%C3%A3o.png"
@@ -44,46 +47,120 @@
                 src="/img%20Jogo/decoration/astrocora%C3%A7%C3%A3o.png"
                 alt="Vida 3"
             >
+
         </div>
+
     </header>
 
     <!-- INSTRUÇÕES DO STEVEN -->
     <aside id="mensagem-steven" aria-labelledby="steven-titulo">
+
+        <!-- ASTRONAUTA DO STEVEN -->
         <div class="steven-avatar" aria-hidden="true">
-            🚀
+
+            <img
+                id="steven-imagem"
+                src="/img%20Jogo/person/astroGN.png"
+                alt=""
+            >
+
         </div>
 
+        <!-- CONTEÚDO DAS INSTRUÇÕES -->
         <div class="steven-conteudo">
-            <h2 id="steven-titulo">
-                Steven — Central Espacial
-            </h2>
 
-            <p>
-                Olá, astronauta! Sou o Steven e vou te ajudar nesta missão!
+            <div class="steven-cabecalho">
+
+                <div>
+                    <h2 id="steven-titulo">
+                        Steven
+                    </h2>
+
+                    <span class="steven-status">
+                        ● CENTRAL ESPACIAL
+                    </span>
+                </div>
+
+                <span class="steven-decoracao" aria-hidden="true">
+                    ✦
+                </span>
+
+            </div>
+
+            <p class="steven-saudacao">
+                Olá, astronauta! Prepare-se para sua missão!
             </p>
 
-            <ul>
-                <li>☄️ <strong>Meteoro:</strong> 1 pulo.</li>
-                <li>👽 <strong>Alien:</strong> 2 pulos.</li>
-                <li>⭐ <strong>Estrela:</strong> 3 pulos.</li>
+            <div class="steven-separador">
+                PROTOCOLO DE DESVIO
+            </div>
+
+            <ul class="steven-regras">
+
+                <li>
+                    <span class="regra-icone" aria-hidden="true">
+                        ☄️
+                    </span>
+
+                    <span>
+                        <strong>Meteoro</strong>
+                        <small>1 pulo</small>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="regra-icone" aria-hidden="true">
+                        👽
+                    </span>
+
+                    <span>
+                        <strong>Alien</strong>
+                        <small>2 pulos</small>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="regra-icone" aria-hidden="true">
+                        ⭐
+                    </span>
+
+                    <span>
+                        <strong>Estrela</strong>
+                        <small>3 pulos</small>
+                    </span>
+                </li>
+
             </ul>
 
-            <p class="steven-alerta">
-                ⚠️ Atenção! Não tente passar por baixo do alien ou da
-                estrela. Alcance a altura necessária para desviar!
-            </p>
+            <div class="steven-alerta">
+
+                <span class="alerta-icone" aria-hidden="true">
+                    ⚠️
+                </span>
+
+                <p>
+                    <strong>Atenção!</strong>
+                    Evite tocar nos obstáculos, inclusive ao cair sobre eles.
+                </p>
+
+            </div>
+
         </div>
+
     </aside>
 
     <!-- ASTRONAUTA DO JOGADOR -->
     <main id="personagem-container">
+
         <h2 id="jogador-nome"></h2>
 
         <img
             id="personagem"
             src=""
             alt="Astronauta do jogador"
+            draggable="false"
         >
+
     </main>
 
     <!-- OBSTÁCULOS -->
@@ -101,14 +178,18 @@
         class="game-over"
         aria-labelledby="game-over-titulo"
     >
-        <h2 id="game-over-titulo">GAME OVER</h2>
+
+        <h2 id="game-over-titulo">
+            GAME OVER
+        </h2>
 
         <p>Suas vidas acabaram, astronauta!</p>
 
         <button id="reiniciar" type="button">
             REINICIAR
         </button>
+
     </section>
+
 </body>
 </html>
-

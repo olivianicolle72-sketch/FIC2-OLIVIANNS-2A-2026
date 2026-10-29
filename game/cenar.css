@@ -44,6 +44,11 @@ body.tela-preta {
     background-image: none !important;
 }
 
+.sumir {
+    display: none !important;
+}
+
+
 /* ==================================================
    TELA INICIAL
    ================================================== */
@@ -58,10 +63,6 @@ body.tela-preta {
     height: 100dvh;
 }
 
-.sumir {
-    display: none !important;
-}
-
 .container {
     font-size: clamp(3rem, 12vw, 180px);
     margin-bottom: 20px;
@@ -69,6 +70,7 @@ body.tela-preta {
 
     text-shadow: 2px 2px 8px #000;
 }
+
 
 /* ==================================================
    BOTÕES
@@ -124,6 +126,7 @@ body.tela-preta {
     z-index: 30;
 }
 
+
 /* ==================================================
    INFORMAÇÕES DO JOGADOR
    ================================================== */
@@ -163,6 +166,7 @@ body.jogo #jogador-info {
     color: #e7f2ff;
 }
 
+
 /* ==================================================
    VIDAS
    ================================================== */
@@ -189,8 +193,9 @@ body.jogo #jogador-info {
     filter: grayscale(1);
 }
 
+
 /* ==================================================
-   MENSAGEM DO STEVEN
+   PAINEL DO STEVEN
    ================================================== */
 
 #mensagem-steven {
@@ -198,125 +203,315 @@ body.jogo #jogador-info {
 
     position: fixed;
 
-    top: 85px;
+    top: 82px;
     left: 50%;
 
     transform: translateX(-50%);
 
-    width: min(560px, calc(100% - 40px));
+    width: min(510px, calc(100% - 32px));
 
-    padding: 16px 20px;
+    max-height: min(230px, calc(100dvh - 100px));
 
-    grid-template-columns: 58px minmax(0, 1fr);
+    overflow-y: auto;
+
+    grid-template-columns: 44px minmax(0, 1fr);
+
     align-items: start;
+    gap: 10px;
 
-    gap: 14px;
+    padding: 10px 14px;
 
-    background: rgba(5, 15, 40, 0.95);
+    background:
+        radial-gradient(
+            ellipse at 15% 0%,
+            rgba(126, 87, 194, 0.22),
+            transparent 50%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(10, 8, 37, 0.97),
+            rgba(25, 18, 65, 0.96),
+            rgba(8, 15, 44, 0.97)
+        );
 
-    border: 1px solid rgba(113, 190, 255, 0.85);
-    border-radius: 18px;
+    border: 1px solid rgba(155, 175, 255, 0.55);
+
+    border-radius: 12px;
 
     box-shadow:
-        0 0 18px rgba(48, 145, 255, 0.3),
-        inset 0 0 15px rgba(40, 110, 200, 0.12);
+        0 0 18px rgba(93, 72, 200, 0.2),
+        inset 0 0 15px rgba(100, 105, 255, 0.05);
 
     color: white;
 
     z-index: 20;
 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    scrollbar-width: thin;
+    scrollbar-color: #7d6bd8 transparent;
 }
 
-/* Mostrar somente durante o jogo. */
 body.jogo #mensagem-steven {
     display: grid;
 
-    animation: stevenEntrada 0.5s ease;
+    animation: stevenEntrada 0.35s ease;
 }
 
-/* Avatar do Steven. */
+
+/* ==================================================
+   AVATAR DO STEVEN
+   ================================================== */
+
 .steven-avatar {
-    width: 58px;
-    height: 58px;
+    width: 44px;
+    height: 44px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    font-size: 2.3rem;
+    overflow: hidden;
 
-    background: rgba(65, 145, 255, 0.18);
-
-    border: 1px solid rgba(140, 200, 255, 0.6);
     border-radius: 50%;
 
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #8276df,
+            #29205f 65%,
+            #100d30
+        );
+
+    border: 1px solid rgba(180, 190, 255, 0.7);
+
     box-shadow:
-        0 0 15px rgba(70, 160, 255, 0.25);
+        0 0 10px rgba(113, 135, 255, 0.25);
+
+    flex-shrink: 0;
 }
+
+.steven-avatar img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 2px;
+
+    object-fit: contain;
+}
+
+
+/* ==================================================
+   CABEÇALHO DO STEVEN
+   ================================================== */
 
 .steven-conteudo {
     min-width: 0;
 }
 
-.steven-conteudo h2 {
-    color: #8ed8ff;
+.steven-cabecalho {
+    display: flex;
 
-    font-size: 1.15rem;
+    justify-content: space-between;
+    align-items: center;
 
-    margin-bottom: 8px;
+    gap: 8px;
+
+    margin-bottom: 5px;
+}
+
+.steven-cabecalho h2 {
+    color: #bbaaff;
+
+    font-size: 1rem;
+
+    margin-bottom: 2px;
 
     text-shadow:
-        0 0 8px rgba(70, 180, 255, 0.5);
+        0 0 8px rgba(130, 105, 255, 0.5);
 }
 
-.steven-conteudo p {
+.steven-status {
+    display: block;
+
     font-family: Arial, sans-serif;
 
-    font-size: 0.9rem;
-    line-height: 1.5;
+    color: #8cdbff;
 
-    margin-bottom: 8px;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
 }
 
-.steven-conteudo ul {
+.steven-decoracao {
+    color: #c4aaff;
+
+    font-size: 1.5rem;
+
+    text-shadow:
+        0 0 10px #a88aff;
+}
+
+
+/* ==================================================
+   SAUDAÇÃO
+   ================================================== */
+
+.steven-saudacao {
+    font-family: Arial, sans-serif;
+
+    font-size: 0.76rem;
+    line-height: 1.35;
+
+    margin-bottom: 6px;
+
+    color: #e4e6ff;
+}
+
+
+/* ==================================================
+   SEPARADOR DAS INSTRUÇÕES
+   ================================================== */
+
+.steven-separador {
+    font-family: Arial, sans-serif;
+
+    font-size: 0.57rem;
+    letter-spacing: 1px;
+
+    color: #a9a4ff;
+
+    border-bottom: 1px solid rgba(155, 145, 255, 0.25);
+
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+}
+
+
+/* ==================================================
+   REGRAS DOS OBSTÁCULOS
+   ================================================== */
+
+.steven-regras {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+
     list-style: none;
 
-    margin: 10px 0;
+    margin: 6px 0;
     padding: 0;
 }
 
-.steven-conteudo li {
+.steven-regras li {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    padding: 5px;
+
+    background: rgba(95, 82, 185, 0.15);
+
+    border: 1px solid rgba(149, 154, 255, 0.16);
+
+    border-radius: 7px;
+
     font-family: Arial, sans-serif;
+}
+
+.regra-icone {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
 
     font-size: 0.9rem;
-    line-height: 1.6;
-
-    margin-bottom: 3px;
 }
 
-.steven-conteudo strong {
-    color: #a9e4ff;
+.steven-regras li strong {
+    display: block;
+
+    color: #c6baff;
+
+    font-size: 0.68rem;
+
+    margin-bottom: 2px;
 }
 
-.steven-conteudo .steven-alerta {
-    color: #ffe59a;
+.steven-regras li small {
+    display: block;
 
-    background: rgba(255, 180, 40, 0.09);
+    color: #e1e5ff;
 
-    border-left: 3px solid #ffcf5c;
-
-    padding: 8px 10px;
-    margin: 10px 0 0;
-
-    border-radius: 0 8px 8px 0;
+    font-size: 0.58rem;
+    line-height: 1.2;
 }
+
+
+/* ==================================================
+   ALERTA DO STEVEN
+   ================================================== */
+
+.steven-alerta {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 6px;
+
+    padding: 6px 8px;
+
+    border-left: 3px solid #c1a2ff;
+
+    border-radius: 0 7px 7px 0;
+
+    background: rgba(119, 75, 186, 0.16);
+}
+
+.alerta-icone {
+    flex-shrink: 0;
+
+    font-size: 0.7rem;
+}
+
+.steven-alerta p {
+    font-family: Arial, sans-serif;
+
+    font-size: 0.66rem;
+    line-height: 1.3;
+
+    color: #f0e9ff;
+}
+
+.steven-alerta strong {
+    color: #e0caff;
+}
+
+
+/* ==================================================
+   ANIMAÇÃO DO STEVEN
+   ================================================== */
 
 @keyframes stevenEntrada {
     from {
         opacity: 0;
-        transform: translate(-50%, -12px);
+        transform: translate(-50%, -8px);
     }
 
     to {
@@ -324,6 +519,7 @@ body.jogo #mensagem-steven {
         transform: translate(-50%, 0);
     }
 }
+
 
 /* ==================================================
    ASTRONAUTA DO JOGADOR
@@ -335,11 +531,13 @@ body.jogo #mensagem-steven {
     position: absolute;
 
     left: 12%;
-    bottom: 105px;
+
+    bottom: 81px;
 
     width: 260px;
 
     flex-direction: column;
+
     align-items: center;
 
     text-align: center;
@@ -347,6 +545,7 @@ body.jogo #mensagem-steven {
     z-index: 4;
 
     transform: translateY(0);
+
     transform-origin: bottom center;
 
     will-change: transform;
@@ -356,49 +555,88 @@ body.jogo #personagem-container {
     display: flex;
 }
 
+
+/* ==================================================
+   NOME PRÓXIMO AO ASTRONAUTA
+   ================================================== */
+
 #jogador-nome {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    position: relative;
 
-    width: 100%;
-    max-width: 280px;
+    z-index: 2;
 
-    margin-bottom: 5px;
+    display: block;
 
-    overflow-wrap: anywhere;
+    width: max-content;
+
+    max-width: 100%;
+
+    margin: 0 auto -230px;
+
+    padding: 3px 10px;
+
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+
+    line-height: 1.1;
+
     text-align: center;
 
+    overflow-wrap: anywhere;
+
+    color: #fff;
+
+    background: rgba(13, 12, 46, 0.82);
+
+    border: 1px solid rgba(161, 190, 255, 0.45);
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 8px rgba(128, 191, 255, 0.18);
+
     text-shadow:
-        0 0 10px #80bfff,
-        0 0 20px #508cff;
+        0 0 7px #80bfff,
+        0 0 13px #508cff;
 }
+
+
+/* ==================================================
+   IMAGEM DO ASTRONAUTA
+   ================================================== */
 
 #personagem {
     display: block;
 
     width: auto;
+
     height: clamp(280px, 40vh, 360px);
 
     max-width: 250px;
 
     object-fit: contain;
+
     object-position: bottom center;
 
     transform: none;
+
     transform-origin: bottom center;
 
-    filter: drop-shadow(
-        0 0 12px rgba(150, 200, 255, 0.55)
-    );
+    filter:
+        drop-shadow(
+            0 0 12px rgba(150, 200, 255, 0.55)
+        );
 
     flex-shrink: 0;
 }
 
+
 /* ==================================================
-   OBSTÁCULOS
+   ÁREA DOS OBSTÁCULOS
    ================================================== */
 
 #area-obstaculos {
     position: absolute;
+
     inset: 0;
 
     overflow: hidden;
@@ -418,7 +656,10 @@ body.jogo #personagem-container {
     will-change: left;
 }
 
-/* METEORO */
+
+/* ==================================================
+   METEORO
+   ================================================== */
 
 .obstaculo.meteoro {
     bottom: 100px;
@@ -427,7 +668,10 @@ body.jogo #personagem-container {
     height: 105px;
 }
 
-/* ALIEN */
+
+/* ==================================================
+   ALIEN
+   ================================================== */
 
 .obstaculo.alien {
     bottom: 200px;
@@ -436,36 +680,45 @@ body.jogo #personagem-container {
     height: 115px;
 }
 
-/* ESTRELA */
+
+/* ==================================================
+   ESTRELA
+   ================================================== */
 
 .obstaculo.estrela {
-    bottom: 300px;
+    bottom: 250px;
 
     width: 110px;
     height: 110px;
 
-    filter: drop-shadow(
-        0 0 15px #ffe76b
-    );
+    filter:
+        drop-shadow(
+            0 0 15px #ffe76b
+        );
 }
 
+
 /* ==================================================
-   LUA / CHÃO
+   CHÃO LUNAR
    ================================================== */
 
 #lua-linha {
     width: 100%;
+
     height: 105px;
 
     position: absolute;
 
     bottom: -150px;
+
     left: 0;
 
     background-image: url("../img/images.jpeg");
 
     background-size: cover;
+
     background-position: center;
+
     background-repeat: no-repeat;
 
     box-shadow:
@@ -486,17 +739,20 @@ body.jogo #personagem-container {
     bottom: 0;
 }
 
+
 /* ==================================================
    EFEITO DE IMPACTO
    ================================================== */
 
 #tela-impacto {
     position: fixed;
+
     inset: 0;
 
     background: #000;
 
     opacity: 0;
+
     pointer-events: none;
 
     z-index: 50;
@@ -516,6 +772,7 @@ body.jogo #personagem-container {
     }
 }
 
+
 /* ==================================================
    GAME OVER
    ================================================== */
@@ -524,6 +781,7 @@ body.jogo #personagem-container {
     display: none;
 
     position: fixed;
+
     inset: 0;
 
     z-index: 60;
@@ -531,7 +789,9 @@ body.jogo #personagem-container {
     background: rgba(0, 0, 0, 0.96);
 
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     gap: 24px;
@@ -572,11 +832,13 @@ body.jogo #personagem-container {
     transform: scale(1.05);
 }
 
+
 /* ==================================================
    CELULARES
    ================================================== */
 
 @media (max-width: 600px) {
+
     #jogador-info {
         top: 12px;
         right: 10px;
@@ -595,52 +857,91 @@ body.jogo #personagem-container {
         height: 24px;
     }
 
-    /* Steven em tamanho compacto. */
+
+    /* PAINEL DO STEVEN */
+
     #mensagem-steven {
-        top: 76px;
+        top: 66px;
 
         width: calc(100% - 20px);
 
-        padding: 10px;
+        max-height: min(190px, calc(100dvh - 80px));
 
-        grid-template-columns: 36px minmax(0, 1fr);
+        grid-template-columns: 34px minmax(0, 1fr);
 
-        gap: 8px;
+        gap: 7px;
 
-        border-radius: 13px;
+        padding: 8px 9px;
+
+        border-radius: 10px;
     }
 
     .steven-avatar {
-        width: 36px;
-        height: 36px;
-
-        font-size: 1.5rem;
+        width: 34px;
+        height: 34px;
     }
 
-    .steven-conteudo h2 {
+    .steven-cabecalho h2 {
         font-size: 0.85rem;
-
-        margin-bottom: 5px;
     }
 
-    .steven-conteudo p,
-    .steven-conteudo li {
-        font-size: 0.72rem;
-        line-height: 1.4;
+    .steven-status {
+        font-size: 0.48rem;
     }
 
-    .steven-conteudo ul {
-        margin: 5px 0;
+    .steven-saudacao {
+        font-size: 0.69rem;
     }
 
-    .steven-conteudo .steven-alerta {
-        padding: 6px;
-        margin-top: 5px;
+    .steven-separador {
+        font-size: 0.5rem;
     }
 
-    /* Astronauta. */
+    .steven-regras {
+        gap: 3px;
+    }
+
+    .steven-regras li {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 3px;
+
+        padding: 4px;
+    }
+
+    .regra-icone {
+        width: 22px;
+        height: 22px;
+
+        font-size: 0.8rem;
+    }
+
+    .steven-regras li strong {
+        font-size: 0.65rem;
+    }
+
+    .steven-regras li small {
+        font-size: 0.55rem;
+    }
+
+    .steven-alerta {
+        gap: 4px;
+
+        padding: 5px;
+    }
+
+    .steven-alerta p {
+        font-size: 0.61rem;
+    }
+
+
+    /* ASTRONAUTA */
+
     #personagem-container {
         left: 3%;
+
         bottom: 95px;
 
         width: 200px;
@@ -653,12 +954,18 @@ body.jogo #personagem-container {
     }
 
     #jogador-nome {
-        font-size: 1rem;
+        max-width: 190px;
 
-        max-width: 200px;
+        margin-bottom: -15px;
+
+        padding: 2px 7px;
+
+        font-size: 0.9rem;
     }
 
-    /* Obstáculos. */
+
+    /* OBSTÁCULOS */
+
     .obstaculo.meteoro {
         bottom: 90px;
 
@@ -675,12 +982,15 @@ body.jogo #personagem-container {
 
     .obstaculo.estrela {
         bottom: 265px;
-
         width: 82px;
         height: 82px;
     }
 
+
+    /* CHÃO */
+
     #lua-linha {
         height: 95px;
     }
+
 }

@@ -22,7 +22,9 @@ const telaImpacto = document.getElementById("tela-impacto");
 const gameOver = document.getElementById("game-over");
 
 const reiniciarButton = document.getElementById("reiniciar");
+
 const mensagemSteven = document.getElementById("mensagem-steven");
+const imagemSteven = document.getElementById("steven-imagem");
 
 
 // =====================================================
@@ -49,26 +51,38 @@ const imagensObstaculos = {
 const CONFIG = {
     vidasIniciais: 3,
 
-    // Cada pulo acrescenta 125 px.
     alturaPorPulo: 125,
 
-    // Tempo máximo antes de voltar ao chão.
     duracaoPulo: 850,
 
-    // Velocidade dos obstáculos.
     velocidadeInicial: 250,
 
-    // Intervalo entre obstáculos.
     intervaloObstaculos: 2300,
 
-    // Tempo de recuperação depois de perder uma vida.
     tempoReinicio: 800,
 
-    // Margens para a área horizontal de colisão.
-    margemAstronautaX: 0.25,
-    margemObstaculoX: 0.15,
+    /*
+     * Margens horizontais e verticais.
+     *
+     * Valores maiores deixam as hitboxes menores.
+     */
 
-    // Mostrar as áreas de colisão para depuração.
+    margemAstronautaX: 0.25,
+    margemAstronautaY: 0.12,
+
+    margemObstaculoX: 0.15,
+    margemObstaculoY: 0.10,
+
+    /*
+     * Pequena tolerância para detectar contato.
+     */
+
+    toleranciaColisao: 4,
+
+    /*
+     * Ative para visualizar as hitboxes.
+     */
+
     debugColisao: false
 };
 
@@ -89,18 +103,20 @@ let alturaAtual = 0;
 let quantidadePulos = 0;
 
 let obstaculos = [];
+
 let indiceSequencia = 0;
 
 let ultimoTempo = 0;
 let tempoPulo = 0;
 
 let animacaoId = null;
+
 let temporizadorSpawn = null;
 let temporizadorImpacto = null;
 
 
 // =====================================================
-// SEQUÊNCIA DE OBSTÁCULOS
+// SEQUÊNCIA DOS OBSTÁCULOS
 // =====================================================
 
 const sequenciaObstaculos = [
@@ -144,7 +160,10 @@ function carregarJogador() {
         return dados ? JSON.parse(dados) : null;
 
     } catch (erro) {
-        console.error("Erro ao carregar jogador:", erro);
+        console.error(
+            "Erro ao carregar jogador:",
+            erro
+        );
 
         return null;
     }
@@ -177,9 +196,11 @@ function mostrarAstronauta() {
         return false;
     }
 
-    jogadorNome.textContent = jogador.nome || "Astronauta";
+    jogadorNome.textContent =
+        jogador.nome || "Astronauta";
 
-    jogadorNickname.textContent = jogador.nickname || "";
+    jogadorNickname.textContent =
+        jogador.nickname || "";
 
     personagem.onerror = function () {
         console.error(
@@ -190,7 +211,24 @@ function mostrarAstronauta() {
 
     personagem.src = imagem;
 
-    personagem.alt = "Astronauta de " + jogador.genero;
+    personagem.alt =
+        "Astronauta de " + jogador.genero;
+
+    /*
+     * O Steven usa a mesma imagem do astronauta
+     * selecionado pelo jogador.
+     */
+
+    if (imagemSteven) {
+        imagemSteven.onerror = function () {
+            console.error(
+                "Erro ao carregar a imagem do Steven:",
+                imagemSteven.src
+            );
+        };
+
+        imagemSteven.src = imagem;
+    }
 
     return true;
 }
@@ -214,7 +252,8 @@ function atualizarVidas() {
             : "Vida perdida";
     });
 
-    const elementoVidas = document.getElementById("vidas");
+    const elementoVidas =
+        document.getElementById("vidas");
 
     if (elementoVidas) {
         elementoVidas.setAttribute(
@@ -235,12 +274,15 @@ function atualizarVidas() {
 
 function prepararPersonagem() {
     alturaAtual = 0;
+
     quantidadePulos = 0;
+
     tempoPulo = 0;
 
     personagemContainer.style.transition = "none";
 
-    personagemContainer.style.transform = "translateY(0)";
+    personagemContainer.style.transform =
+        "translateY(0)";
 
     void personagemContainer.offsetHeight;
 }
@@ -259,7 +301,10 @@ function pular() {
         return;
     }
 
-    // Limite de três pulos consecutivos.
+    /*
+     * Máximo de três pulos consecutivos.
+     */
+
     if (quantidadePulos >= 3) {
         return;
     }
@@ -269,7 +314,10 @@ function pular() {
     alturaAtual =
         CONFIG.alturaPorPulo * quantidadePulos;
 
-    // Cada novo pulo reinicia o tempo de permanência no ar.
+    /*
+     * Cada novo pulo reinicia o tempo no ar.
+     */
+
     tempoPulo = 0;
 
     personagemContainer.style.transition =
@@ -292,7 +340,9 @@ function voltarAoChao() {
         "translateY(0)";
 
     alturaAtual = 0;
+
     quantidadePulos = 0;
+
     tempoPulo = 0;
 }
 
@@ -312,7 +362,8 @@ function criarObstaculo(tipo) {
 
     const imagem = document.createElement("img");
 
-    imagem.className = "obstaculo " + tipo;
+    imagem.className =
+        "obstaculo " + tipo;
 
     imagem.src = imagensObstaculos[tipo];
 
@@ -340,14 +391,15 @@ function criarObstaculo(tipo) {
 
         atingido: false,
 
-        pulosNecessarios: regra.pulosNecessarios,
+        pulosNecessarios:
+            regra.pulosNecessarios,
 
-        alturaNecessaria: regra.alturaNecessaria,
-
-        hitboxVisual: null
+        alturaNecessaria:
+            regra.alturaNecessaria
     };
 
-    imagem.style.left = obstaculo.x + "px";
+    imagem.style.left =
+        obstaculo.x + "px";
 
     obstaculos.push(obstaculo);
 }
@@ -366,10 +418,12 @@ function agendarObstaculo() {
         return;
     }
 
-    const tipo = sequenciaObstaculos[indiceSequencia];
+    const tipo =
+        sequenciaObstaculos[indiceSequencia];
 
     indiceSequencia =
-        (indiceSequencia + 1) % sequenciaObstaculos.length;
+        (indiceSequencia + 1) %
+        sequenciaObstaculos.length;
 
     criarObstaculo(tipo);
 
@@ -381,12 +435,13 @@ function agendarObstaculo() {
 
 
 // =====================================================
-// OBTER ÁREA HORIZONTAL DE COLISÃO
+// OBTER HITBOX
 // =====================================================
 
-function obterHitboxHorizontal(
+function obterHitbox(
     elemento,
-    margemHorizontal
+    margemX,
+    margemY
 ) {
     if (
         !elemento ||
@@ -395,84 +450,139 @@ function obterHitboxHorizontal(
         return null;
     }
 
-    const retangulo = elemento.getBoundingClientRect();
+    const rect =
+        elemento.getBoundingClientRect();
 
     if (
-        retangulo.width <= 0 ||
-        retangulo.height <= 0
+        rect.width <= 0 ||
+        rect.height <= 0
     ) {
         return null;
     }
 
-    const margem = retangulo.width * margemHorizontal;
+    const margemHorizontal =
+        rect.width * margemX;
+
+    const margemVertical =
+        rect.height * margemY;
 
     return {
-        esquerda: retangulo.left + margem,
+        esquerda:
+            rect.left + margemHorizontal,
 
-        direita: retangulo.right - margem,
+        direita:
+            rect.right - margemHorizontal,
 
-        largura: retangulo.width - margem * 2
+        topo:
+            rect.top + margemVertical,
+
+        fundo:
+            rect.bottom - margemVertical,
+
+        largura:
+            rect.width - margemHorizontal * 2,
+
+        altura:
+            rect.height - margemVertical * 2
     };
 }
 
 
 // =====================================================
-// VERIFICAR SOBREPOSIÇÃO HORIZONTAL
+// VERIFICAR COLISÃO REAL
 // =====================================================
 
-function sobreposicaoHorizontal(elementoA, elementoB) {
-    const hitboxA = obterHitboxHorizontal(
+function verificarColisao(
+    elementoA,
+    elementoB
+) {
+    /*
+     * A hitbox do astronauta é menor que sua imagem,
+     * para reduzir colisões causadas por transparências.
+     */
+
+    const astronauta = obterHitbox(
         elementoA,
-        CONFIG.margemAstronautaX
+        CONFIG.margemAstronautaX,
+        CONFIG.margemAstronautaY
     );
 
-    const hitboxB = obterHitboxHorizontal(
+    const obstaculo = obterHitbox(
         elementoB,
-        CONFIG.margemObstaculoX
+        CONFIG.margemObstaculoX,
+        CONFIG.margemObstaculoY
     );
 
-    if (!hitboxA || !hitboxB) {
+    if (!astronauta || !obstaculo) {
         return false;
     }
 
     if (
-        hitboxA.largura <= 0 ||
-        hitboxB.largura <= 0
+        astronauta.largura <= 0 ||
+        astronauta.altura <= 0 ||
+        obstaculo.largura <= 0 ||
+        obstaculo.altura <= 0
     ) {
         return false;
     }
 
+    const tolerancia =
+        CONFIG.toleranciaColisao;
+
+    /*
+     * A colisão horizontal sozinha não basta.
+     * O astronauta também precisa estar próximo
+     * verticalmente do obstáculo.
+     */
+
+    const colisaoHorizontal =
+        astronauta.direita + tolerancia >=
+            obstaculo.esquerda &&
+
+        astronauta.esquerda - tolerancia <=
+            obstaculo.direita;
+
+    const colisaoVertical =
+        astronauta.fundo + tolerancia >=
+            obstaculo.topo &&
+
+        astronauta.topo - tolerancia <=
+            obstaculo.fundo;
+
     return (
-        hitboxA.direita > hitboxB.esquerda &&
-        hitboxA.esquerda < hitboxB.direita
+        colisaoHorizontal &&
+        colisaoVertical
     );
 }
 
 
 // =====================================================
-// DEBUG VISUAL DAS ÁREAS DE COLISÃO
+// DEBUG VISUAL DAS HITBOXES
 // =====================================================
 
-function desenharHitbox(elemento, cor) {
+function desenharHitbox(
+    elemento,
+    cor,
+    margemX,
+    margemY
+) {
     if (!CONFIG.debugColisao) {
         return;
     }
 
-    const hitbox = obterHitboxHorizontal(
+    const hitbox = obterHitbox(
         elemento,
-        elemento === personagem
-            ? CONFIG.margemAstronautaX
-            : CONFIG.margemObstaculoX
+        margemX,
+        margemY
     );
 
     if (!hitbox) {
         return;
     }
 
-    const retangulo = elemento.getBoundingClientRect();
-
     if (!elemento._hitboxVisual) {
-        const caixa = document.createElement("div");
+        const caixa =
+            document.createElement("div");
 
         caixa.style.position = "fixed";
 
@@ -487,19 +597,29 @@ function desenharHitbox(elemento, cor) {
         elemento._hitboxVisual = caixa;
     }
 
-    const caixa = elemento._hitboxVisual;
+    const caixa =
+        elemento._hitboxVisual;
 
-    caixa.style.border = "2px solid " + cor;
+    caixa.style.border =
+        "2px solid " + cor;
 
-    caixa.style.left = hitbox.esquerda + "px";
+    caixa.style.left =
+        hitbox.esquerda + "px";
 
-    caixa.style.top = retangulo.top + "px";
+    caixa.style.top =
+        hitbox.topo + "px";
 
-    caixa.style.width = hitbox.largura + "px";
+    caixa.style.width =
+        hitbox.largura + "px";
 
-    caixa.style.height = retangulo.height + "px";
+    caixa.style.height =
+        hitbox.altura + "px";
 }
 
+
+// =====================================================
+// LIMPAR HITBOX VISUAL
+// =====================================================
 
 function limparHitboxVisual(elemento) {
     if (
@@ -519,7 +639,9 @@ function limparHitboxVisual(elemento) {
 
 function limparObstaculos() {
     obstaculos.forEach(function (obstaculo) {
-        limparHitboxVisual(obstaculo.elemento);
+        limparHitboxVisual(
+            obstaculo.elemento
+        );
 
         obstaculo.elemento.remove();
     });
@@ -527,6 +649,13 @@ function limparObstaculos() {
     obstaculos = [];
 
     areaObstaculos.innerHTML = "";
+
+    /*
+     * Remove também qualquer hitbox de depuração
+     * do astronauta.
+     */
+
+    limparHitboxVisual(personagem);
 }
 
 
@@ -593,58 +722,44 @@ function perderVida() {
 
         pararMovimento();
 
-        temporizadorImpacto = setTimeout(function () {
-            gameOver.classList.add("visivel");
+        temporizadorImpacto = setTimeout(
+            function () {
+                gameOver.classList.add("visivel");
 
-            telaImpacto.classList.remove("ativo");
+                telaImpacto.classList.remove("ativo");
 
-            temporizadorImpacto = null;
-
-        }, CONFIG.tempoReinicio);
+                temporizadorImpacto = null;
+            },
+            CONFIG.tempoReinicio
+        );
 
         return;
     }
 
-    temporizadorImpacto = setTimeout(function () {
-        temporizadorImpacto = null;
+    temporizadorImpacto = setTimeout(
+        function () {
+            temporizadorImpacto = null;
 
-        if (
-            gameEncerrado ||
-            !jogoAtivo
-        ) {
-            return;
-        }
+            if (
+                gameEncerrado ||
+                !jogoAtivo
+            ) {
+                return;
+            }
 
-        document.body.classList.remove("tela-preta");
+            document.body.classList.remove(
+                "tela-preta"
+            );
 
-        emRecuperacao = false;
+            emRecuperacao = false;
 
-        indiceSequencia = 0;
+            indiceSequencia = 0;
 
-        iniciarMovimento();
+            iniciarMovimento();
 
-        agendarObstaculo();
-
-    }, CONFIG.tempoReinicio);
-}
-
-
-// =====================================================
-// VERIFICAR SE O ASTRONAUTA CONSEGUE DESVIAR
-// =====================================================
-
-function conseguiuDesviar(obstaculo) {
-    /*
-     * A altura alcançada é comparada com a altura
-     * exigida pelo obstáculo.
-     *
-     * Meteoro: 125 px.
-     * Alien: 250 px.
-     * Estrela: 375 px.
-     */
-
-    return (
-        alturaAtual >= obstaculo.alturaNecessaria
+            agendarObstaculo();
+        },
+        CONFIG.tempoReinicio
     );
 }
 
@@ -688,23 +803,41 @@ function atualizarJogo(tempoAtual) {
 
 
     // -----------------------------------------------
-    // REMOVER OBSTÁCULOS QUE SAÍRAM DA TELA
+    // REMOVER OBSTÁCULOS FORA DA TELA
     // -----------------------------------------------
 
-    obstaculos = obstaculos.filter(function (obstaculo) {
-        if (
-            obstaculo.x +
-            obstaculo.elemento.offsetWidth < 0
-        ) {
-            limparHitboxVisual(obstaculo.elemento);
+    obstaculos = obstaculos.filter(
+        function (obstaculo) {
+            if (
+                obstaculo.x +
+                obstaculo.elemento.offsetWidth < 0
+            ) {
+                limparHitboxVisual(
+                    obstaculo.elemento
+                );
 
-            obstaculo.elemento.remove();
+                obstaculo.elemento.remove();
 
-            return false;
+                return false;
+            }
+
+            return true;
         }
+    );
 
-        return true;
-    });
+
+    // -----------------------------------------------
+    // DESENHAR HITBOXES DE DEPURAÇÃO
+    // -----------------------------------------------
+
+    if (CONFIG.debugColisao) {
+        desenharHitbox(
+            personagem,
+            "#69ffb4",
+            CONFIG.margemAstronautaX,
+            CONFIG.margemAstronautaY
+        );
+    }
 
 
     // -----------------------------------------------
@@ -723,37 +856,33 @@ function atualizarJogo(tempoAtual) {
             continue;
         }
 
+        if (CONFIG.debugColisao) {
+            desenharHitbox(
+                obstaculo.elemento,
+                "#ff536b",
+                CONFIG.margemObstaculoX,
+                CONFIG.margemObstaculoY
+            );
+        }
+
         /*
-         * Primeiro verificamos se o astronauta
-         * está horizontalmente alinhado ao obstáculo.
-         *
-         * Isso evita perder vidas quando o obstáculo
-         * ainda está distante.
+         * A colisão exige proximidade horizontal
+         * e vertical.
          */
 
-        const estaAlinhado = sobreposicaoHorizontal(
+        const colidiu = verificarColisao(
             personagem,
             obstaculo.elemento
         );
 
-        desenharHitbox(personagem, "lime");
-
-        desenharHitbox(obstaculo.elemento, "red");
-
-        if (!estaAlinhado) {
+        if (!colidiu) {
             continue;
         }
 
         /*
-         * Se o astronauta alcançou a altura exigida,
-         * consegue desviar do obstáculo.
-         *
-         * Se não alcançou, perde uma vida.
+         * Marca o obstáculo antes de perder a vida
+         * para impedir colisões duplicadas.
          */
-
-        if (conseguiuDesviar(obstaculo)) {
-            continue;
-        }
 
         obstaculo.atingido = true;
 
@@ -770,7 +899,9 @@ function atualizarJogo(tempoAtual) {
     if (quantidadePulos > 0) {
         tempoPulo += delta * 1000;
 
-        if (tempoPulo >= CONFIG.duracaoPulo) {
+        if (
+            tempoPulo >= CONFIG.duracaoPulo
+        ) {
             voltarAoChao();
         }
     }
@@ -780,7 +911,8 @@ function atualizarJogo(tempoAtual) {
     // PRÓXIMO QUADRO
     // -----------------------------------------------
 
-    animacaoId = requestAnimationFrame(atualizarJogo);
+    animacaoId =
+        requestAnimationFrame(atualizarJogo);
 }
 
 
@@ -797,7 +929,8 @@ function iniciarMovimento() {
         cancelAnimationFrame(animacaoId);
     }
 
-    animacaoId = requestAnimationFrame(atualizarJogo);
+    animacaoId =
+        requestAnimationFrame(atualizarJogo);
 }
 
 
@@ -867,105 +1000,125 @@ function reiniciarJogo() {
 // EVENTOS DE TECLADO
 // =====================================================
 
-playButton.addEventListener("click", iniciarJogo);
+playButton.addEventListener(
+    "click",
+    iniciarJogo
+);
 
-document.addEventListener("keydown", function (evento) {
-    if (
-        evento.code === "Space" ||
-        evento.code === "ArrowUp"
-    ) {
+document.addEventListener(
+    "keydown",
+    function (evento) {
         if (
-            jogoAtivo &&
-            !gameEncerrado
+            evento.code === "Space" ||
+            evento.code === "ArrowUp"
         ) {
-            evento.preventDefault();
+            if (
+                jogoAtivo &&
+                !gameEncerrado
+            ) {
+                evento.preventDefault();
 
-            pular();
+                pular();
+            }
         }
     }
-});
+);
 
 
 // =====================================================
 // EVENTOS DE TOQUE E CLIQUE
 // =====================================================
 
-document.addEventListener("pointerdown", function (evento) {
-    if (
-        !jogoAtivo ||
-        gameEncerrado
-    ) {
-        return;
+document.addEventListener(
+    "pointerdown",
+    function (evento) {
+        if (
+            !jogoAtivo ||
+            gameEncerrado
+        ) {
+            return;
+        }
+
+        /*
+         * Não pular quando o jogador interagir
+         * com os controles ou com o painel do Steven.
+         */
+
+        if (
+            evento.target.closest("#Volta") ||
+            evento.target.closest("#game-over") ||
+            evento.target.closest("#jogador-info") ||
+            evento.target.closest("#mensagem-steven")
+        ) {
+            return;
+        }
+
+        pular();
     }
-
-    /*
-     * Não pular ao clicar nos controles,
-     * nas informações do jogador ou na mensagem.
-     */
-
-    if (
-        evento.target.closest("#Volta") ||
-        evento.target.closest("#game-over") ||
-        evento.target.closest("#jogador-info") ||
-        evento.target.closest("#mensagem-steven")
-    ) {
-        return;
-    }
-
-    pular();
-});
+);
 
 
 // =====================================================
 // BOTÃO REINICIAR
 // =====================================================
 
-reiniciarButton.addEventListener("click", reiniciarJogo);
+reiniciarButton.addEventListener(
+    "click",
+    reiniciarJogo
+);
 
 
 // =====================================================
 // BOTÃO VOLTAR
 // =====================================================
 
-voltaButton.addEventListener("click", function () {
-    if (
-        jogoAtivo ||
-        gameEncerrado
-    ) {
-        jogoAtivo = false;
+voltaButton.addEventListener(
+    "click",
+    function () {
+        if (
+            jogoAtivo ||
+            gameEncerrado
+        ) {
+            jogoAtivo = false;
 
-        gameEncerrado = false;
+            gameEncerrado = false;
 
-        emRecuperacao = false;
+            emRecuperacao = false;
 
-        pararMovimento();
+            pararMovimento();
 
-        limparObstaculos();
+            limparObstaculos();
 
-        if (temporizadorImpacto !== null) {
-            clearTimeout(temporizadorImpacto);
+            if (temporizadorImpacto !== null) {
+                clearTimeout(temporizadorImpacto);
 
-            temporizadorImpacto = null;
+                temporizadorImpacto = null;
+            }
+
+            gameOver.classList.remove("visivel");
+
+            telaImpacto.classList.remove("ativo");
+
+            document.body.classList.remove(
+                "tela-preta"
+            );
+
+            document.body.classList.remove("jogo");
+
+            luaLinha.classList.remove(
+                "expandir-linha"
+            );
+
+            wrapper.classList.remove("sumir");
+
+            prepararPersonagem();
+
+        } else {
+            window.location.href =
+                "http://127.0.0.1:5500/index.html";
         }
-
-        gameOver.classList.remove("visivel");
-
-        telaImpacto.classList.remove("ativo");
-
-        document.body.classList.remove("tela-preta");
-
-        document.body.classList.remove("jogo");
-
-        luaLinha.classList.remove("expandir-linha");
-
-        wrapper.classList.remove("sumir");
-
-        prepararPersonagem();
-
-    } else {
-        window.location.href = "/crud/index.html";
     }
-});
+);
 
 
 // =====================================================
